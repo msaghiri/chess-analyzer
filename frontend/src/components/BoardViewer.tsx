@@ -1,5 +1,7 @@
 import { Chessboard } from "react-chessboard";
 import { useBoardNavigation } from "../hooks/boardNavigationHook";
+import useAnalysisContext from "../hooks/useAnalysisContext";
+import { useEffect } from "react";
 
 const constantChessboardOptions = {
 	allowDragging: false,
@@ -62,15 +64,18 @@ const ControlsContainer = ({
 };
 
 const BoardViewer = () => {
+	const { loadPgn } = useAnalysisContext();
 	const boardInfo = useBoardNavigation();
-	console.log(boardInfo);
 
 	const chessboardOptions = {
 		...constantChessboardOptions,
 		position: boardInfo.currentPosition.fen,
 	};
 
-	console.log(boardInfo.loadPgn(SAMPLE_PGN));
+	//FOR DEBUGGING PURPOSES
+	useEffect(() => {
+		console.log(loadPgn(SAMPLE_PGN));
+	}, [loadPgn]);
 
 	return (
 		<div className="flex justify-center items-center gap-3 p-3 bg-gray-700 rounded-2xl">

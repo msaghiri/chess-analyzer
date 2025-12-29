@@ -1,14 +1,24 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom";
 import AnalysisPage from "./pages/AnalysisPage";
 import InputPGNPage from "./pages/InputPGNPage";
+import { AnalysisContextProvider } from "./contexts/AnalysisContextProvider";
+
+function AnalysisRoutes() {
+	return (
+		<AnalysisContextProvider>
+			<Outlet />
+		</AnalysisContextProvider>
+	);
+}
 
 function App() {
-
 	return (
 		<BrowserRouter>
 			<Routes>
-				<Route path="/" element={<InputPGNPage/>} />
-				<Route path="/analysis" element={<AnalysisPage/>} />
+				<Route path="" element={<AnalysisRoutes />}>
+					<Route path="/analysis" element={<AnalysisPage />} />
+					<Route path="/input" element={<InputPGNPage />} />
+				</Route>
 			</Routes>
 		</BrowserRouter>
 	);
