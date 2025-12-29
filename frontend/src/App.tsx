@@ -1,10 +1,16 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AnalysisPage from "./pages/AnalysisPage";
+import InputPGNPage from "./pages/InputPGNPage";
 
 function App() {
+
 	return (
-		<div>
-			<AnalysisPage />
-		</div>
+		<BrowserRouter>
+			<Routes>
+				<Route path="/" element={<InputPGNPage/>} />
+				<Route path="/analysis" element={<AnalysisPage/>} />
+			</Routes>
+		</BrowserRouter>
 	);
 }
 

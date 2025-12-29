@@ -1,13 +1,12 @@
 import { Chess, DEFAULT_POSITION } from "chess.js";
 import { useState } from "react";
 
-
 interface PositionObject {
     fen : string,
     index : number
 };
 
-export const usingBoardNavigation = () => {
+export const useBoardNavigation = () => {
     const [currentPosition, setCurrentPosition] = useState<PositionObject>({
         fen: DEFAULT_POSITION,
         index: 0

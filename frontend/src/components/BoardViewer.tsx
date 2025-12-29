@@ -1,5 +1,5 @@
 import { Chessboard } from "react-chessboard";
-import { usingBoardNavigation } from "../hooks/boardNavigationHook";
+import { useBoardNavigation } from "../hooks/boardNavigationHook";
 
 const constantChessboardOptions = {
 	allowDragging: false,
@@ -62,7 +62,7 @@ const ControlsContainer = ({
 };
 
 const BoardViewer = () => {
-	const boardInfo = usingBoardNavigation();
+	const boardInfo = useBoardNavigation();
 	console.log(boardInfo);
 
 	const chessboardOptions = {
