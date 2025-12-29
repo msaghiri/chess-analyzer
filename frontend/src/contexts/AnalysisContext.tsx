@@ -21,7 +21,9 @@ export const AnalysisContext = createContext<AnalysisContextType>({
 export const AnalysisContextProvider = ({children} : {children : React.ReactNode}) => {
     const [pgn, setPgn] = useState("");
 
-    const loadPgn = (pgn : string) => {}
+    const loadPgn = (newPgn : string) => {
+        setPgn(newPgn);
+    }
 
 
     const contextValue = {
