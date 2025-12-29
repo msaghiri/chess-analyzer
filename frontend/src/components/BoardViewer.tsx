@@ -1,6 +1,5 @@
 import { Chessboard } from "react-chessboard";
-import { Chess, DEFAULT_POSITION } from "chess.js";
-import { useState } from "react";
+import { usingBoardNavigation } from "../hooks/BoardNavigationHook";
 
 const constantChessboardOptions = {
 	allowDragging: false,
@@ -37,66 +36,32 @@ Bd7 9. a3 Qc8 10. f4 Bxh3 11. Bxh3 Qxh3 12. Rf2 Nd4 13. Rh2 Nxe2+ 14. Qxe2 Qxg3+
 15. Qg2 Qe1+ 16. Qf1 Qxf1+ 17. Kxf1 Nd7 18. Ke2 a6 19. Be3 b5 20. Nd5 Bd8 21.
 Rah1 h6 22. f5 g5 23. Rxh6 Kg7 24. Rh7+ Kg8 25. Rh8+ Kg7 26. R1h7# 1-0`;
 
+const ButtonContainer = ({prevMove, nextMove}) => {
+	return <div>
+
+	</div>
+}
+
 const BoardViewer = () => {
-	const [currentPosition, setCurrentPosition] = useState({
-		fen: DEFAULT_POSITION,
-		index: 0,
-	});
-
-	const chess = new Chess();
-	chess.loadPgn(SAMPLE_PGN);
-
-	const gameHistory = chess.history({ verbose: true });
-	const gameFENs: string[] = [];
-
-	gameFENs[0] = DEFAULT_POSITION;
-
-	//this probably doesnt work as intended, will fix later
-	gameHistory.forEach((move, i) => {
-		gameFENs[i + 1] = move.after;
-	});
+	const boardInfo = usingBoardNavigation(); 
+	console.log(boardInfo);
 
 	const chessboardOptions = {
 		...constantChessboardOptions,
-		position: currentPosition.fen,
+		position: boardInfo.currentPosition.fen,
 	};
 
-	const prevMove = () => {
-		if (currentPosition.index > 0) {
-			setCurrentPosition({
-				fen: gameFENs[currentPosition.index - 1],
-				index: currentPosition.index - 1,
-			});
-		} else {
-			setCurrentPosition({
-				fen: gameFENs[gameFENs.length - 1],
-				index: gameFENs.length - 1,
-			});
-		}
-	};
-	const nextMove = () => {
-		if (currentPosition.index < gameFENs.length - 1) {
-			setCurrentPosition({
-				fen: gameFENs[currentPosition.index + 1],
-				index: currentPosition.index + 1,
-			});
-		} else {
-			setCurrentPosition({
-				fen: gameFENs[0],
-				index: 0,
-			});
-		}
-	};
+	console.log(boardInfo.loadPgn(SAMPLE_PGN));
 
 	return (
-		<div className="board-viewer">
+		<div className="board-viewer w-250 h-180 items-center flex gap-2 justify-center bg-gray-800">
 			<div className="board-container w-175">
 				<Chessboard options={chessboardOptions} />
 			</div>
-			<button className="bg-white" onClick={prevMove}>
+			<button className="bg-white" onClick={boardInfo.prevMove}>
 				PREVIOUS
 			</button>
-			<button className="bg-white" onClick={nextMove}>
+			<button className="bg-white" onClick={boardInfo.nextMove}>
 				NEXT
 			</button>
 		</div>
