@@ -18,7 +18,7 @@ export const AnalysisContextProvider = ({
 		START_POS_OBJECT,
 	]);
 
-	const loadPgn = (newPgn: string) => {
+	const loadPgn = (newPgn: string): boolean => {
 		try {
 			const game = new Chess();
 			game.loadPgn(newPgn);
@@ -34,11 +34,12 @@ export const AnalysisContextProvider = ({
 			});
 
 			setGamePositions(tempArr);
+			setPgn(newPgn);
+			return true;
 		} catch {
-			throw new Error("Invalid PGN");
+			console.error("Invalid PGN");
+			return false;
 		}
-
-		setPgn(newPgn);
 	};
 
 	const contextValue: AnalysisContextType = {

@@ -7,12 +7,12 @@ export interface GamePosition {
 //What the analysis context returns
 export interface AnalysisContextType {
 	pgn: string;
-	loadPgn: (pgn: string) => void;
+	loadPgn: (pgn: string) => boolean;
 	gamePositions: GamePosition[];
 }
 
 //For board navigation
-export interface PositionObject {
+export interface BoardState {
 	fen: string;
 	index: number;
 }

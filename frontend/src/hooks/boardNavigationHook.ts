@@ -1,6 +1,6 @@
 import useAnalysisContext from "./useAnalysisContext";
 import { useState } from "react";
-import type { PositionObject } from "../types/game.types";
+import type { BoardState } from "../types/game.types";
 
 export const useBoardNavigation = () => {
 	const { gamePositions } = useAnalysisContext();
@@ -17,7 +17,7 @@ export const useBoardNavigation = () => {
 		);
 	};
 
-	const currentPosition: PositionObject = {
+	const currentPosition: BoardState = {
 		fen: gamePositions[currentIndex].fen,
 		index: currentIndex,
 	};
