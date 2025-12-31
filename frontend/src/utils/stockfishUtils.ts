@@ -6,6 +6,8 @@ class StockfishService {
 
 	private isAnalyzing = false;
 
+	private maxDepth = 10;
+
 	init(): void {
 		if (this.engine) return;
 
@@ -44,10 +46,10 @@ class StockfishService {
 
 		return new Promise((resolve) => {
 			this.engine?.postMessage(`position fen ${fen}`);
-			this.engine?.postMessage(`go depth 15`);
+			this.engine?.postMessage(`go depth ${this.maxDepth}`);
 			const responses: string[] = [];
 			const handleResult = (data: string) => {
-				if (data.startsWith("info depth 15")) {
+				if (data.startsWith(`info depth ${this.maxDepth}`)) {
 					responses.push(data);
 				}
 				if (data.startsWith("bestmove")) {
@@ -61,31 +63,26 @@ class StockfishService {
 		});
 	}
 
-	async analyzeGame(gamePositions: GamePosition[]) {
+	async analyzeGame(
+		gamePositions: GamePosition[],
+		reportProgressTo?: (progress: number) => void
+	) {
 		const responses: Record<number, string[]> = {};
-
-		/*gamePositions.forEach(async (gamePosition, index) => {
-			responses[index] = await this.analyze(gamePosition.fen);
-			console.log(`Analyzed ${index}`);
-		});*/
 
 		for (const [index, gamePosition] of gamePositions.entries()) {
 			responses[index] = await this.analyze(gamePosition.fen);
-			console.log(`Analyzed ${index}`);
+			if (reportProgressTo !== undefined)
+				reportProgressTo(index / gamePositions.length);
+			gamePositions[index].positionFeatures.evaluation = responses[index];
 		}
 
-		console.log(responses);
+		//console.log(responses);
 
 		return responses;
 	}
 
-	async analyzeFENs(fens: string[]) {
-		const responses: Record<number, string[]> = {};
-		fens.forEach(async (fen, index) => {
-			responses[index] = await this.analyze(fen);
-		});
-
-		return responses;
+	setMaxDepth(maxDepth: number) {
+		this.maxDepth = maxDepth;
 	}
 
 	terminate(): void {

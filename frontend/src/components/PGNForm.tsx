@@ -13,9 +13,13 @@ export const PGNForm = () => {
 		setPgn(event.target.value);
 	};
 
+	const logProgress = (progress: number) => {
+		console.log(progress);
+	};
+
 	const handleLoadPgn = () => {
 		if (pgn.length) {
-			if (loadPgn(pgn)) {
+			if (loadPgn(pgn, logProgress)) {
 				navigate("/analysis");
 			}
 		}

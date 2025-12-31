@@ -1,7 +1,12 @@
 //actual positions
 export interface GamePosition {
 	fen: string;
-	positionFeatures: object;
+	positionFeatures: PositionFeatures;
+}
+
+//position features
+export interface PositionFeatures {
+	evaluation?: string[];
 }
 
 //game
@@ -13,7 +18,10 @@ export interface ChessGame {
 //What the analysis context returns
 export interface AnalysisContextType {
 	pgn: string;
-	loadPgn: (pgn: string) => boolean;
+	loadPgn: (
+		pgn: string,
+		reportProgressTo?: (progress: number) => void
+	) => boolean;
 	gamePositions: GamePosition[];
 }
 

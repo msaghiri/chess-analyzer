@@ -21,21 +21,19 @@ export const AnalysisContextProvider = ({
 		stockfish.init();
 	});
 
-	const loadPgn = (newPgn: string): boolean => {
+	const loadPgn = (
+		newPgn: string,
+		reportProgressTo?: (progress: number) => void
+	): boolean => {
 		try {
 			const game = createGameObject(newPgn);
 
 			setGamePositions(game.gamePositions);
 			setPgn(game.pgn);
 
-			let analysis = {};
-
-			stockfish.analyzeGame(game.gamePositions).then((result) => {
-				analysis = result;
-				console.log(analysis);
+			stockfish.analyzeGame(game.gamePositions, reportProgressTo).then(() => {
+				storage.saveGame(game.pgn, game.gamePositions);
 			});
-
-			storage.saveGame(game.pgn, game.gamePositions);
 
 			return true;
 		} catch {
