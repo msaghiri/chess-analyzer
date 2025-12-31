@@ -21,8 +21,12 @@ class StockfishService {
 		this.engine?.postMessage(command);
 	}
 
-	onMessage(callback: (message: string) => void): void {
-		this.onMessageHandler = callback;
+	onMessage(callback?: (message: string) => void): void {
+		if (callback) {
+			this.onMessageHandler = callback;
+		} else {
+			this.onMessageHandler = null;
+		}
 	}
 
 	analyze(fen: string) {
@@ -34,11 +38,9 @@ class StockfishService {
 				responses.push(data);
 			}
 			if (data.startsWith("bestmove")) {
-				this.onMessage((data) => {});
+				this.onMessage();
 				console.log("FINISHED RECEIVING");
-				setTimeout(() => {
-					console.log(responses);
-				}, 5000);
+				return responses;
 			}
 		};
 
