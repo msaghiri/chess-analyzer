@@ -1,7 +1,13 @@
-//For analysis
+//actual positions
 export interface GamePosition {
 	fen: string;
 	positionFeatures: object;
+}
+
+//game
+export interface ChessGame {
+	gamePositions: GamePosition[];
+	pgn: string;
 }
 
 //What the analysis context returns

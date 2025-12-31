@@ -1,42 +1,31 @@
 import { useState, type ReactNode } from "react";
 import { AnalysisContext } from "./AnalysisContext";
 import type { AnalysisContextType, GamePosition } from "../types/game.types";
-import { Chess, DEFAULT_POSITION } from "chess.js";
-
-const START_POS_OBJECT: GamePosition = {
-	fen: DEFAULT_POSITION,
-	positionFeatures: {},
-};
+import storage from "../utils/storageUtils";
+import { createGameObject } from "../utils/chessUtils";
 
 export const AnalysisContextProvider = ({
 	children,
 }: {
 	children: ReactNode;
 }) => {
-	const [pgn, setPgn] = useState(""); //let's keep this idk if we will need it
-	const [gamePositions, setGamePositions] = useState<GamePosition[]>([
-		START_POS_OBJECT,
-	]);
+	const [pgn, setPgn] = useState("");
+	const [gamePositions, setGamePositions] = useState<GamePosition[]>(
+		storage.loadGamePositions()
+	);
 
 	const loadPgn = (newPgn: string): boolean => {
 		try {
-			const game = new Chess();
-			game.loadPgn(newPgn);
+			const game = createGameObject(newPgn);
 
-			const tempArr: GamePosition[] = [START_POS_OBJECT];
-			const history = game.history({ verbose: true });
+			setGamePositions(game.gamePositions);
+			setPgn(game.pgn);
 
-			history.forEach((fen, index) => {
-				tempArr[index + 1] = {
-					fen: fen.after,
-					positionFeatures: {},
-				};
-			});
+			storage.saveGame(game.pgn, game.gamePositions);
 
-			setGamePositions(tempArr);
-			setPgn(newPgn);
 			return true;
 		} catch {
+			console.log(newPgn);
 			console.error("Invalid PGN");
 			return false;
 		}

@@ -3,6 +3,6 @@ import type { AnalysisContextType } from "../types/game.types";
 
 export const AnalysisContext = createContext<AnalysisContextType>({
 	pgn: "",
-	loadPgn: () => {},
+	loadPgn: () => false,
 	gamePositions: [],
 });
