@@ -1,9 +1,5 @@
 import { Chessboard } from "react-chessboard";
 import { useBoardNavigation } from "../hooks/boardNavigationHook";
-import { stockfish } from "../utils/stockfishUtils";
-
-import { useEffect } from "react";
-import { DEFAULT_POSITION } from "chess.js";
 
 const constantChessboardOptions = {
 	allowDragging: false,
@@ -45,21 +41,7 @@ const ControlsContainer = ({
 	);
 };
 
-const printResult = (data: string) => {
-	console.log(data);
-};
-
 const BoardViewer = () => {
-	useEffect(() => {
-		stockfish.init();
-		console.log("Stockfish initialized.");
-		stockfish.onMessage(printResult);
-
-		setTimeout(() => {
-			stockfish.analyze(DEFAULT_POSITION);
-		}, 5000);
-	}, []);
-
 	const boardInfo = useBoardNavigation();
 
 	const chessboardOptions = {

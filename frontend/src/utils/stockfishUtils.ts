@@ -1,6 +1,10 @@
+import type { GamePosition } from "../types/game.types";
+
 class StockfishService {
 	private engine: Worker | null = null;
 	private onMessageHandler: ((message: string) => void) | null = null;
+
+	private isAnalyzing = false;
 
 	init(): void {
 		if (this.engine) return;
@@ -14,7 +18,9 @@ class StockfishService {
 		};
 
 		this.engine.postMessage("uci");
-		this.engine?.postMessage("setoption name MultiPV value 3");
+		this.engine.postMessage("setoption name MultiPV value 3");
+
+		this.isAnalyzing = false;
 	}
 
 	sendCommand(command: string): void {
@@ -29,22 +35,57 @@ class StockfishService {
 		}
 	}
 
-	analyze(fen: string) {
-		this.engine?.postMessage(`position fen ${fen}`);
-		this.engine?.postMessage(`go depth 15`);
-		const responses: string[] = [];
-		const handleResult = (data: string) => {
-			if (data.startsWith("info depth 15")) {
-				responses.push(data);
-			}
-			if (data.startsWith("bestmove")) {
-				this.onMessage();
-				console.log("FINISHED RECEIVING");
-				return responses;
-			}
-		};
+	async analyze(fen: string): Promise<string[]> {
+		if (this.isAnalyzing) {
+			throw new Error("Stockfish is currently analyzing a different position.");
+		}
 
-		this.onMessage(handleResult);
+		this.isAnalyzing = true;
+
+		return new Promise((resolve) => {
+			this.engine?.postMessage(`position fen ${fen}`);
+			this.engine?.postMessage(`go depth 15`);
+			const responses: string[] = [];
+			const handleResult = (data: string) => {
+				if (data.startsWith("info depth 15")) {
+					responses.push(data);
+				}
+				if (data.startsWith("bestmove")) {
+					this.onMessage();
+					this.isAnalyzing = false;
+					resolve(responses);
+				}
+			};
+
+			this.onMessage(handleResult);
+		});
+	}
+
+	async analyzeGame(gamePositions: GamePosition[]) {
+		const responses: Record<number, string[]> = {};
+
+		/*gamePositions.forEach(async (gamePosition, index) => {
+			responses[index] = await this.analyze(gamePosition.fen);
+			console.log(`Analyzed ${index}`);
+		});*/
+
+		for (const [index, gamePosition] of gamePositions.entries()) {
+			responses[index] = await this.analyze(gamePosition.fen);
+			console.log(`Analyzed ${index}`);
+		}
+
+		console.log(responses);
+
+		return responses;
+	}
+
+	async analyzeFENs(fens: string[]) {
+		const responses: Record<number, string[]> = {};
+		fens.forEach(async (fen, index) => {
+			responses[index] = await this.analyze(fen);
+		});
+
+		return responses;
 	}
 
 	terminate(): void {
