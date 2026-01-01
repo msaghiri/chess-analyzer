@@ -19,9 +19,11 @@ const constantChessboardOptions = {
 const ControlsContainer = ({
 	prevMove,
 	nextMove,
+	evalTest,
 }: {
 	prevMove: () => void;
 	nextMove: () => void;
+	evalTest: string;
 }) => {
 	return (
 		<div className="flex-1 flex h-full gap-5 items-center justify-center">
@@ -37,6 +39,7 @@ const ControlsContainer = ({
 			>
 				NEXT
 			</button>
+			<h1>{evalTest}</h1>
 		</div>
 	);
 };
@@ -49,6 +52,11 @@ const BoardViewer = () => {
 		position: boardInfo.currentPosition.fen,
 	};
 
+	const currentEval =
+		boardInfo.gamePositions[boardInfo.currentPosition.index].positionFeatures
+			.evaluation;
+	const currentBestMove =
+		currentEval.length > 0 ? currentEval[0].evaluation : 0;
 	return (
 		<div className="flex justify-center items-center gap-3 p-3 bg-gray-700 rounded-2xl">
 			<div className="board-container w-170">
@@ -57,7 +65,9 @@ const BoardViewer = () => {
 			<ControlsContainer
 				prevMove={boardInfo.prevMove}
 				nextMove={boardInfo.nextMove}
+				evalTest={currentBestMove}
 			/>
+			<h2>{boardInfo.currentPosition.fen}</h2>
 		</div>
 	);
 };

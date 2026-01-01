@@ -2,10 +2,23 @@ import useAnalysisContext from "../hooks/useAnalysisContext";
 import { useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
+const LoadingBar = ({ value }: { value: number }) => {
+	return (
+		<div className="w-full bg-neutral-500 rounded-full h-2">
+			<div
+				className="bg-blue-200 h-full rounded-full"
+				style={{ width: `${value * 100}%` }}
+			></div>
+		</div>
+	);
+};
+
 export const PGNForm = () => {
 	const { loadPgn } = useAnalysisContext();
 
 	const [pgn, setPgn] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
+	const [progress, setProgress] = useState(0.0);
 
 	const navigate = useNavigate();
 
@@ -13,15 +26,19 @@ export const PGNForm = () => {
 		setPgn(event.target.value);
 	};
 
-	const logProgress = (progress: number) => {
-		console.log(progress);
+	const handleSetProgress = (newProgress: number) => {
+		setProgress(newProgress);
+	};
+
+	const handleOnLoad = () => {
+		setIsLoading(false);
+		navigate("/analysis");
 	};
 
 	const handleLoadPgn = () => {
+		setIsLoading(true);
 		if (pgn.length) {
-			if (loadPgn(pgn, logProgress)) {
-				navigate("/analysis");
-			}
+			loadPgn(pgn, handleOnLoad, handleSetProgress);
 		}
 	};
 
@@ -39,6 +56,8 @@ export const PGNForm = () => {
 			>
 				Analyze
 			</button>
+
+			{isLoading && <LoadingBar value={progress} />}
 		</div>
 	);
 };

@@ -23,16 +23,18 @@ export const AnalysisContextProvider = ({
 
 	const loadPgn = (
 		newPgn: string,
+		onLoad: () => void,
 		reportProgressTo?: (progress: number) => void
 	): boolean => {
 		try {
 			const game = createGameObject(newPgn);
 
-			setGamePositions(game.gamePositions);
-			setPgn(game.pgn);
-
 			stockfish.analyzeGame(game.gamePositions, reportProgressTo).then(() => {
+				setGamePositions(game.gamePositions);
+				setPgn(game.pgn);
 				storage.saveGame(game.pgn, game.gamePositions);
+
+				onLoad();
 			});
 
 			return true;

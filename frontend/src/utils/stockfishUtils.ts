@@ -1,4 +1,4 @@
-import type { GamePosition } from "../types/game.types";
+import type { EvaluationObject, GamePosition } from "../types/game.types";
 
 class StockfishService {
 	private engine: Worker | null = null;
@@ -71,14 +71,30 @@ class StockfishService {
 
 		for (const [index, gamePosition] of gamePositions.entries()) {
 			responses[index] = await this.analyze(gamePosition.fen);
+
+			const evalObjects = responses[index].map((response) =>
+				this.parseEvaluation(response)
+			);
+			gamePositions[index].positionFeatures.evaluation = evalObjects;
+
 			if (reportProgressTo !== undefined)
 				reportProgressTo(index / gamePositions.length);
-			gamePositions[index].positionFeatures.evaluation = responses[index];
 		}
 
-		//console.log(responses);
-
 		return responses;
+	}
+
+	parseEvaluation(stockfishResponse: string): EvaluationObject {
+		const arr = stockfishResponse.split(" ");
+		const depth = parseInt(arr[2]);
+		const evaluation = parseFloat(arr[9]);
+		const move = arr[19];
+
+		return {
+			depth,
+			move,
+			evaluation,
+		};
 	}
 
 	setMaxDepth(maxDepth: number) {

@@ -6,7 +6,14 @@ export interface GamePosition {
 
 //position features
 export interface PositionFeatures {
-	evaluation?: string[];
+	evaluation: EvaluationObject[];
+}
+
+//for a single given move
+export interface EvaluationObject {
+	depth: number; //i think we should use seldepth for this, maybe time in the future?
+	move: string;
+	evaluation: number;
 }
 
 //game
@@ -20,6 +27,7 @@ export interface AnalysisContextType {
 	pgn: string;
 	loadPgn: (
 		pgn: string,
+		onLoad: () => void,
 		reportProgressTo?: (progress: number) => void
 	) => boolean;
 	gamePositions: GamePosition[];

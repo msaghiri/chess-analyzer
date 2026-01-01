@@ -22,5 +22,5 @@ export const useBoardNavigation = () => {
 		index: currentIndex,
 	};
 
-	return { currentPosition, nextMove, prevMove };
+	return { currentPosition, nextMove, prevMove, gamePositions };
 };
