@@ -41,3 +41,36 @@ export const fenToArray = (fen: string) => {
     return finalArray;
 }
 
+
+const isPassedPawn = (rank : number, file : number, chessboard : string[]) => {
+    const pawn = chessboard[rank][file];
+    const isLeftMost = rank == 0 ? true : false;
+    const isRightMost = rank == RANKS-1 ? true : false;
+    const isWhite = pawn == 'P' ? true : false;
+    const direction = isWhite ? -1 : 1;
+    const oppositePawn = pawn == 'P' ? 'p' : 'P';
+
+    
+
+    for(let currRank = rank+direction; currRank < RANKS && currRank >= 0; currRank += direction){
+        if(chessboard[currRank][file] == oppositePawn) return false;
+        if(!isLeftMost && chessboard[currRank][file-1] == oppositePawn) return false;
+        if(!isRightMost && chessboard[currRank][file+1] == oppositePawn) return false;
+    }
+
+    return true;
+}
+
+const isPawn = (square : string) => ((square == 'P' || square == 'p'));
+
+
+const findPassedPawns = (chessboard : string[]) => {
+    const passedPawns = [];
+    for(let rank = 0; rank < RANKS; rank++){
+        for(let file = 0; file < FILES; file++){
+            if(isPawn(chessboard[rank][file]) && isPassedPawn(rank, file, chessboard)) passedPawns.push([rank, file]);
+        }
+    }
+
+    return passedPawns;
+}
