@@ -14,7 +14,7 @@ const loadGamePositions = (): GamePosition[] => {
 		return [
 			{
 				fen: DEFAULT_POSITION,
-				positionFeatures: {},
+				positionFeatures: {evaluation: []},
 			},
 		];
 	}

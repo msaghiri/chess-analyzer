@@ -3,7 +3,9 @@ import type { GamePosition, ChessGame } from "../types/game.types";
 
 export const START_POSITION: GamePosition = {
 	fen: DEFAULT_POSITION,
-	positionFeatures: {},
+	positionFeatures: {
+		evaluation: []
+	},
 };
 
 export const createGameObject = (pgn: string): ChessGame => {
@@ -15,7 +17,9 @@ export const createGameObject = (pgn: string): ChessGame => {
 	history.forEach((fen, index) => {
 		tempArr[index + 1] = {
 			fen: fen.after,
-			positionFeatures: {},
+			positionFeatures: {
+				evaluation: []
+			},
 		};
 	});
 
@@ -24,7 +28,3 @@ export const createGameObject = (pgn: string): ChessGame => {
 		pgn: pgn,
 	};
 };
-
-/*export const AnalyzeGamem = (game: ChessGame): number[] => {
-	return [0.0];
-};*/
