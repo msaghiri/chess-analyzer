@@ -1,4 +1,4 @@
-import { PieceMap } from "../featureExtraction.types";
+import type { PieceMap, PawnChain } from "../featureExtraction.types";
 import type { PieceFiles, PiecePosition, PressureMap } from "../featureExtraction.types";
 import {
 	RANKS,
@@ -6,7 +6,6 @@ import {
 	RANK_INDEX,
 	FILE_INDEX,
 	parsePieceMap,
-	getSquare,
 	sortPiecesByFile,
 	WHITE_PAWN,
 	BLACK_PAWN,
@@ -15,7 +14,7 @@ import {
 
 /* ---------------------------------- UTILS --------------------------------- */
 const getPawns = (chessboard: string[][]): PieceMap => {
-	let pawns: PieceMap = {
+	const pawns: PieceMap = {
 		white: [],
 		black: [],
 	};
@@ -83,7 +82,7 @@ const getPassedPawns = (pawnsByFile: PieceFiles): PieceMap => {
 		const rightBlackFile = blackPawnsByFile[rightFile];
 
 		//check white pawns in that file
-		let opponentFiles = {
+		const opponentFiles = {
 			opponentLeftFile: leftBlackFile,
 			opponentRightFile: rightBlackFile,
 			opponentSameFile: fullBlackFile,
@@ -185,7 +184,10 @@ const getBackwardsPawns = (pawnsByFile: PieceFiles, pressureMap: PressureMap, ch
 };
 
 /* ------------------------------- PAWN CHAINS ------------------------------ */
-const isPawnInChain = (pawn: PiecePosition, activePawnChains): number => {
+const isPawnInChain = (
+	pawn: PiecePosition,
+	activePawnChains: { pawns: PiecePosition[]; lastPawn: PiecePosition }[]
+): number => {
 	for (let i = 0; i < activePawnChains.length; i++) {
 		const lastPawn = activePawnChains[i].lastPawn;
 		const lastPawnFile = lastPawn[FILE_INDEX];
@@ -199,7 +201,7 @@ const isPawnInChain = (pawn: PiecePosition, activePawnChains): number => {
 	return -1;
 };
 
-const buildPawnChains = (pawnsByFile: { [file: number]: PiecePosition[] }) => {
+const buildPawnChains = (pawnsByFile: { [file: number]: PiecePosition[] }): PawnChain[] => {
 	const activeChains = [];
 	for (let file = 0; file < FILES; file++) {
 		if (!(file in pawnsByFile)) continue;
@@ -285,7 +287,12 @@ export const analyzePawns = (chessboard: string[][], pressureMap: PressureMap) =
 };
 
 //for testing purposes only, temporary
-export const logPawnAnalysis = (pawnAnalysis) => {
+export const logPawnAnalysis = (pawnAnalysis: {
+	passedPawns: PieceMap;
+	pawnChains: { white: PawnChain[]; black: PawnChain[] };
+	isolatedPawns: PieceMap;
+	backwardsPawns: PieceMap;
+}) => {
 	const passedPawns = pawnAnalysis.passedPawns;
 	const isolatedPawns = pawnAnalysis.isolatedPawns;
 	const pawnChains = pawnAnalysis.pawnChains;

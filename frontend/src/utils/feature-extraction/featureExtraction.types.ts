@@ -1,6 +1,6 @@
 export type PiecePosition = number[];
 
-export interface PositionFeatures {}
+//export interface PositionFeatures {}
 
 export interface PieceMap {
 	white: PiecePosition[];
@@ -14,6 +14,11 @@ export interface PieceFiles {
 	black: {
 		[key: number]: PiecePosition[];
 	};
+}
+
+export interface PawnChain {
+	pawns: PiecePosition[];
+	lastPawn: PiecePosition;
 }
 
 export interface PawnHeuristics {
@@ -31,8 +36,8 @@ export interface PawnHeuristics {
 export interface SquarePressure {
 	white: number;
 	black: number;
-	whiteMin?: number;
-	blackMin?: number;
+	whiteMin: number;
+	blackMin: number;
 }
 
 export type PressureMap = SquarePressure[][];

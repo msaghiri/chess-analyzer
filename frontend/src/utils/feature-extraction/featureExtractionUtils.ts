@@ -1,4 +1,4 @@
-import { PiecePosition, PieceMap, PieceFiles } from "./featureExtraction.types";
+import type { PiecePosition, PieceMap, PieceFiles } from "./featureExtraction.types";
 
 export const RANKS = 8;
 export const FILES = 8;
@@ -56,8 +56,8 @@ export const parsePieceMap = (pieceMap: PieceMap) => {
 	const white = pieceMap.white;
 	const black = pieceMap.black;
 
-	const blackSquares: String[] = [];
-	const whiteSquares: String[] = [];
+	const blackSquares: string[] = [];
+	const whiteSquares: string[] = [];
 
 	for (let i = 0; i < white.length; i++) {
 		whiteSquares.push(getSquare(white[i]));
@@ -117,8 +117,10 @@ export const logChessboard = (chessboard: string[][]) => {
 };
 
 export const sortPiecesByFile = (pieces: PieceMap): PieceFiles => {
-	const white = {};
-	const black = {};
+	const pieceFiles: PieceFiles = {
+		white: {},
+		black: {},
+	};
 
 	const whitePieces = pieces.white;
 	const blackPieces = pieces.black;
@@ -127,24 +129,24 @@ export const sortPiecesByFile = (pieces: PieceMap): PieceFiles => {
 		const currPiece = whitePieces[i];
 		const file = currPiece[1];
 
-		if (file in white) {
-			white[file].push(currPiece);
+		if (file in pieceFiles.white) {
+			pieceFiles.white[file].push(currPiece);
 		} else {
-			white[file] = [currPiece];
+			pieceFiles.white[file] = [currPiece];
 		}
 	}
 	for (let i = 0; i < blackPieces.length; i++) {
 		const currPiece = blackPieces[i];
 		const file = currPiece[1];
 
-		if (file in black) {
-			black[file].push(currPiece);
+		if (file in pieceFiles.black) {
+			pieceFiles.black[file].push(currPiece);
 		} else {
-			black[file] = [currPiece];
+			pieceFiles.black[file] = [currPiece];
 		}
 	}
 
-	return { white, black };
+	return pieceFiles;
 };
 
 /* ----------------------------- GENERATE MOVES ----------------------------- */

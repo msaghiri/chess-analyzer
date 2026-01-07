@@ -70,7 +70,7 @@ export const getPieceAttackMap = (chessboard: string[][]): PieceAttackMap => {
 			if (square === EMPTY_SQUARE) continue;
 
 			const attacker: PiecePosition = [rank, file];
-			const color = getColor(square);
+			const color = getColor(square) as "white" | "black";
 			const attackedSquares = getAttackedSquares(attacker, chessboard);
 
 			pieceAttackMap[color].push(attackedSquares);
@@ -95,7 +95,7 @@ export const getMaterialCount = (chessboard: string[][]): MaterialCounter => {
 			if (chessboard[rank][file] === EMPTY_SQUARE) continue;
 
 			const square = chessboard[rank][file];
-			const pieceColor = getColor(square);
+			const pieceColor = getColor(square) as "white" | "black";
 			const pieceType = square.toLowerCase();
 			const pieceValue = getMaterialValue(pieceType);
 
@@ -176,7 +176,7 @@ export const analyzePieces = (chessboard: string[][]) => {
 };
 
 const piecePositionsToSquares = (piecePositions: PiecePosition[]): string[] => {
-	const squares = [];
+	const squares: string[] = [];
 	piecePositions.forEach((position) => squares.push(getSquare(position)));
 	return squares;
 };
