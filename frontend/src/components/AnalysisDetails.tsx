@@ -1,12 +1,8 @@
 import { useMemo } from "react";
-import type { BoardState, GamePosition } from "../types/game.types";
+import type { BoardNav} from "../types/game.types";
 import { parseHeuristics, runAnalysis } from "../utils/feature-extraction/featureExtractionService";
 
-export const AnalysisDetails = ({
-	boardInfo,
-}: {
-	boardInfo: { currentPosition: BoardState; nextMove: () => void; prevMove: () => void; gamePositions: GamePosition[] };
-}) => {
+export const AnalysisDetails = ({boardInfo} : {boardInfo: BoardNav}) => {
 	const fen = boardInfo.currentPosition.fen;
 
 	const heuristics = useMemo(() => {

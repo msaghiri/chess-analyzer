@@ -1,11 +1,9 @@
 import { Chess, DEFAULT_POSITION } from "chess.js";
-import type { GamePosition, ChessGame } from "../types/game.types";
+import type { GamePosition, ChessGame} from "../types/game.types";
 
 export const START_POSITION: GamePosition = {
 	fen: DEFAULT_POSITION,
-	positionFeatures: {
-		evaluation: []
-	},
+	evaluation: [],
 };
 
 export const createGameObject = (pgn: string): ChessGame => {
@@ -17,9 +15,7 @@ export const createGameObject = (pgn: string): ChessGame => {
 	history.forEach((fen, index) => {
 		tempArr[index + 1] = {
 			fen: fen.after,
-			positionFeatures: {
-				evaluation: []
-			},
+			evaluation: []
 		};
 	});
 

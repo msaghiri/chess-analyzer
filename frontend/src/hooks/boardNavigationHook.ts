@@ -1,8 +1,8 @@
 import useAnalysisContext from "./useAnalysisContext";
 import { useState } from "react";
-import type { BoardState } from "../types/game.types";
+import type { BoardNav, BoardState } from "../types/game.types";
 
-export const useBoardNavigation = () => {
+export const useBoardNavigation = (): BoardNav => {
 	const { gamePositions } = useAnalysisContext();
 	const [currentIndex, setCurrentIndex] = useState(0);
 

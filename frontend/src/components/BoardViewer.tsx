@@ -1,5 +1,5 @@
 import { Chessboard } from "react-chessboard";
-import type { BoardState, GamePosition } from "../types/game.types";
+import type { BoardNav } from "../types/game.types";
 
 const constantChessboardOptions = {
 	allowDragging: false,
@@ -29,11 +29,7 @@ const ControlsContainer = ({ prevMove, nextMove }: { prevMove: () => void; nextM
 	);
 };
 
-const BoardViewer = ({
-	boardInfo,
-}: {
-	boardInfo: { currentPosition: BoardState; nextMove: () => void; prevMove: () => void; gamePositions: GamePosition[] };
-}) => {
+const BoardViewer = ({boardInfo} : {boardInfo: BoardNav}) => {
 	const chessboardOptions = {
 		...constantChessboardOptions,
 		position: boardInfo.currentPosition.fen,

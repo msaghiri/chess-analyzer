@@ -1,8 +1,6 @@
 export type PiecePosition = number[];
 export type square = string;
 
-//export interface PositionFeatures {}
-
 export interface PieceMap {
 	white: PiecePosition[];
 	black: PiecePosition[];

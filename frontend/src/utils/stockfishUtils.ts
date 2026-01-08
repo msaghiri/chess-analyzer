@@ -75,7 +75,7 @@ class StockfishService {
 			const evalObjects = responses[index].map((response) =>
 				this.parseEvaluation(response)
 			);
-			gamePositions[index].positionFeatures.evaluation = evalObjects;
+			gamePositions[index].evaluation = evalObjects;
 
 			if (reportProgressTo !== undefined)
 				reportProgressTo(index / gamePositions.length);

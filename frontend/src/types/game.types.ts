@@ -1,11 +1,6 @@
 //actual positions
 export interface GamePosition {
 	fen: string;
-	positionFeatures: PositionFeatures;
-}
-
-//position features
-export interface PositionFeatures {
 	evaluation: EvaluationObject[];
 }
 
@@ -37,4 +32,11 @@ export interface AnalysisContextType {
 export interface BoardState {
 	fen: string;
 	index: number;
+}
+
+export interface BoardNav {
+	currentPosition: BoardState;
+	nextMove: () => void;
+	prevMove: () => void;
+	gamePositions: GamePosition[];
 }
