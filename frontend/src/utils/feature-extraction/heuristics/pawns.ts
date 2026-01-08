@@ -1,4 +1,4 @@
-import type { PieceMap, PawnChain } from "../featureExtraction.types";
+import type { PieceMap, PawnChain, PawnHeuristics } from "../featureExtraction.types";
 import type { PieceFiles, PiecePosition, PressureMap } from "../featureExtraction.types";
 import {
 	RANKS,
@@ -274,7 +274,7 @@ const getIsolatedPawns = (pawnsByFile: PieceFiles): PieceMap => {
 };
 /* -------------------------------------------------------------------------- */
 
-export const analyzePawns = (chessboard: string[][], pressureMap: PressureMap) => {
+export const analyzePawns = (chessboard: string[][], pressureMap: PressureMap): PawnHeuristics => {
 	const pawns = getPawns(chessboard);
 	const pawnsByFile = sortPiecesByFile(pawns);
 

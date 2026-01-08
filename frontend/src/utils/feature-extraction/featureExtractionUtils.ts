@@ -1,4 +1,19 @@
-import type { PiecePosition, PieceMap, PieceFiles } from "./featureExtraction.types";
+import type {
+	PiecePosition,
+	PieceMap,
+	PieceFiles,
+	PawnChains,
+	ParsedPawnChains,
+	ParsedPawnChain,
+	PawnChain,
+	square,
+	PieceAttackMap,
+	PressureMap,
+	ParsedPieceAttackMap,
+	ParsedPressureMap,
+	AttackedSquares,
+	ParsedAttackedSquares,
+} from "./featureExtraction.types";
 
 export const RANKS = 8;
 export const FILES = 8;
@@ -51,7 +66,14 @@ export const getSquare = (piecePosition: PiecePosition) => {
 	return `${actualSquareFile}${actualSquareRank}`;
 };
 
-//returns square names from PieceMap
+/* ---------------------------- PARSE HEURISTICS ---------------------------- */
+
+export const piecePositionsToSquares = (piecePositions: PiecePosition[]): string[] => {
+	const squares: string[] = [];
+	piecePositions.forEach((position) => squares.push(getSquare(position)));
+	return squares;
+};
+
 export const parsePieceMap = (pieceMap: PieceMap) => {
 	const white = pieceMap.white;
 	const black = pieceMap.black;
@@ -71,6 +93,82 @@ export const parsePieceMap = (pieceMap: PieceMap) => {
 		black: blackSquares,
 	};
 };
+
+export const parsePawnChains = (pawnChains: PawnChains): ParsedPawnChains => {
+	const whitePawnChains = pawnChains.white;
+	const blackPawnChains = pawnChains.black;
+
+	const parsePawnChainList = (pawnChainList: PawnChain[]) => {
+		const parsedPawnChainList: ParsedPawnChain[] = [];
+		pawnChainList.forEach((pawnChain: PawnChain) => {
+			const pawns: PiecePosition[] = pawnChain.pawns;
+			const parsedPawns: square[] = [];
+
+			pawns.forEach((pawn) => parsedPawns.push(getSquare(pawn)));
+			const parsedLastPawn = getSquare(pawnChain.lastPawn);
+
+			const parsedPawnChain: ParsedPawnChain = {
+				pawns: parsedPawns,
+				lastPawn: parsedLastPawn,
+			};
+
+			parsedPawnChainList.push(parsedPawnChain);
+		});
+		return parsedPawnChainList;
+	};
+
+	const parsedWhitePawnChains = parsePawnChainList(whitePawnChains);
+	const parsedBlackPawnChains = parsePawnChainList(blackPawnChains);
+
+	return {
+		white: parsedWhitePawnChains,
+		black: parsedBlackPawnChains,
+	};
+};
+
+export const parsePieceAttackMap = (pieceAttackMap: PieceAttackMap): ParsedPieceAttackMap => {
+	const whiteAttackedSquaresArray: AttackedSquares[] = pieceAttackMap.white;
+	const blackAttackedSquaresArray: AttackedSquares[] = pieceAttackMap.black;
+
+	const parseAttackedSquaresArray = (attackedSquaresArray: AttackedSquares[]): ParsedAttackedSquares[] => {
+		const parsedAttackedSquaresArray: ParsedAttackedSquares[] = [];
+		attackedSquaresArray.forEach((attackedSquares) => {
+			const parsedSquares = piecePositionsToSquares(attackedSquares.squares);
+
+			const parsedAttackedSquares: ParsedAttackedSquares = {
+				pieceType: attackedSquares.pieceType,
+				value: attackedSquares.value,
+				squares: parsedSquares,
+			};
+
+			parsedAttackedSquaresArray.push(parsedAttackedSquares);
+		});
+		return parsedAttackedSquaresArray;
+	};
+
+	const parsedWhiteAttackedSquaresArray = parseAttackedSquaresArray(whiteAttackedSquaresArray);
+	const parsedBlackAttackedSquaresArray = parseAttackedSquaresArray(blackAttackedSquaresArray);
+
+	return {
+		white: parsedWhiteAttackedSquaresArray,
+		black: parsedBlackAttackedSquaresArray,
+	};
+};
+
+export const parsePressureMap = (pressureMap: PressureMap): ParsedPressureMap => {
+	const parsedPressureMap: ParsedPressureMap = {};
+
+	for (let rank = 0; rank < RANKS; rank++) {
+		for (let file = 0; file < FILES; file++) {
+			const key = getSquare([rank, file] as PiecePosition);
+			parsedPressureMap[key] = pressureMap[rank][file];
+		}
+	}
+
+	return parsedPressureMap;
+};
+
+/* -------------------------------- PARSE FEN ------------------------------- */
 
 const parseFenRank = (rank: string) => {
 	const rankAsArr = new Array(FILES);
@@ -109,6 +207,8 @@ export const fenToArray = (fen: string) => {
 
 	return finalArray;
 };
+
+/* -------------------------------------------------------------------------- */
 
 export const logChessboard = (chessboard: string[][]) => {
 	for (let rank = 0; rank < RANKS; rank++) {

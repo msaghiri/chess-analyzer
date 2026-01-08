@@ -1,10 +1,16 @@
 export type PiecePosition = number[];
+export type square = string;
 
 //export interface PositionFeatures {}
 
 export interface PieceMap {
 	white: PiecePosition[];
 	black: PiecePosition[];
+}
+
+export interface ParsedPieceMap {
+	white: square[];
+	black: square[];
 }
 
 export interface PieceFiles {
@@ -21,16 +27,19 @@ export interface PawnChain {
 	lastPawn: PiecePosition;
 }
 
-export interface PawnHeuristics {
-	//to be implemented later
-	passedPawns: {
-		white: PiecePosition[];
-		black: PiecePosition[];
-	};
-	pawnChains: {
-		white: PiecePosition[][];
-		black: PiecePosition[][];
-	};
+export interface ParsedPawnChain {
+	pawns: square[];
+	lastPawn: square;
+}
+
+export interface PawnChains {
+	white: PawnChain[];
+	black: PawnChain[];
+}
+
+export interface ParsedPawnChains {
+	white: ParsedPawnChain[];
+	black: ParsedPawnChain[];
 }
 
 export interface SquarePressure {
@@ -42,15 +51,30 @@ export interface SquarePressure {
 
 export type PressureMap = SquarePressure[][];
 
+export type ParsedPressureMap = {
+	[key: square]: SquarePressure;
+};
+
 export interface AttackedSquares {
 	pieceType: string;
 	value: number;
 	squares: PiecePosition[];
 }
 
+export interface ParsedAttackedSquares {
+	pieceType: string;
+	value: number;
+	squares: square[];
+}
+
 export type PieceAttackMap = {
 	white: AttackedSquares[];
 	black: AttackedSquares[];
+};
+
+export type ParsedPieceAttackMap = {
+	white: ParsedAttackedSquares[];
+	black: ParsedAttackedSquares[];
 };
 
 export type MaterialCounter = {
@@ -63,3 +87,47 @@ export type MaterialCounter = {
 		[key: string]: number;
 	};
 };
+
+export type BishopPair = {
+	white: boolean;
+	black: boolean;
+};
+
+/* ----------------------- OVERALL HEURISTICS OBJECTS ----------------------- */
+export interface PawnHeuristics {
+	passedPawns: PieceMap;
+	isolatedPawns: PieceMap;
+	backwardsPawns: PieceMap;
+	pawnChains: PawnChains;
+}
+
+export interface ParsedPawnHeuristics {
+	passedPawns: ParsedPieceMap;
+	isolatedPawns: ParsedPieceMap;
+	backwardsPawns: ParsedPieceMap;
+	pawnChains: ParsedPawnChains;
+}
+
+export interface ImbalanceHeuristics {
+	attackMap: PieceAttackMap;
+	materialCount: MaterialCounter;
+	pressureMap: PressureMap;
+	bishopPair: BishopPair;
+}
+
+export interface ParsedImbalanceHeuristics {
+	attackMap: ParsedPieceAttackMap;
+	materialCount: MaterialCounter;
+	pressureMap: ParsedPressureMap;
+	bishopPair: BishopPair;
+}
+
+export interface OverallHeuristics {
+	pawnHeuristics: PawnHeuristics;
+	imbalanceHeuristics: ImbalanceHeuristics;
+}
+
+export interface ParsedOverallHeuristics {
+	pawnHeuristics: ParsedPawnHeuristics;
+	imbalanceHeuristics: ParsedImbalanceHeuristics;
+}

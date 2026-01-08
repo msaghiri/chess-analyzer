@@ -11,11 +11,13 @@ import {
 	getKingMoves,
 	getQueenMoves,
 	getColor,
-	getSquare,
 	getPawnAttacks,
+	piecePositionsToSquares,
 } from "../featureExtractionUtils";
 import type {
 	AttackedSquares,
+	BishopPair,
+	ImbalanceHeuristics,
 	MaterialCounter,
 	PieceAttackMap,
 	PiecePosition,
@@ -154,7 +156,7 @@ export const getPressureMap = (pieceAttackMap: PieceAttackMap): PressureMap => {
 	return pressureMap;
 };
 
-export const getBishopPair = (materialCounter: MaterialCounter): { white: boolean; black: boolean } => {
+export const getBishopPair = (materialCounter: MaterialCounter): BishopPair => {
 	const bishopPair = {
 		white: false,
 		black: false,
@@ -166,19 +168,13 @@ export const getBishopPair = (materialCounter: MaterialCounter): { white: boolea
 	return bishopPair;
 };
 
-export const analyzePieces = (chessboard: string[][]) => {
+export const analyzePieces = (chessboard: string[][]): ImbalanceHeuristics => {
 	const attackMap = getPieceAttackMap(chessboard);
 	const materialCount = getMaterialCount(chessboard);
 	const pressureMap = getPressureMap(attackMap);
 	const bishopPair = getBishopPair(materialCount);
 
 	return { attackMap, materialCount, pressureMap, bishopPair };
-};
-
-const piecePositionsToSquares = (piecePositions: PiecePosition[]): string[] => {
-	const squares: string[] = [];
-	piecePositions.forEach((position) => squares.push(getSquare(position)));
-	return squares;
 };
 
 export const logPieceAnalysis = (pieceAnalysis: {
