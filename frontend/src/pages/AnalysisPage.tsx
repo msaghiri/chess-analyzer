@@ -1,18 +1,15 @@
 import BoardViewer from "../components/BoardViewer";
+import { AnalysisDetails } from "../components/AnalysisDetails";
+import { useBoardNavigation } from "../hooks/boardNavigationHook";
 
 const AnalysisPage = () => {
+	const boardInfo = useBoardNavigation();
 	return (
-		<div className="min-h-screen bg-gray-900 flex flex-row p-8 gap-8">
+		<div className="h-screen bg-gray-900 flex flex-row p-8 gap-8">
 			<div className="flex-1 flex justify-center items-center">
-				<BoardViewer />
+				<BoardViewer boardInfo={boardInfo} />
 			</div>
-
-			<div className="w-96 flex flex-col gap-4">
-				<div className="flex-1 bg-gray-800 rounded-xl p-4 border border-gray-700">
-					<h2 className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-4">Heuristics Analysis</h2>
-					<div className="text-gray-500 italic">Detailed analysis will go here...</div>
-				</div>
-			</div>
+			<AnalysisDetails boardInfo={boardInfo} />
 		</div>
 	);
 };

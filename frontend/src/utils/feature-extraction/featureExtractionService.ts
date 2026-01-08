@@ -5,11 +5,18 @@ import type {
 	ParsedPawnHeuristics,
 	ParsedPieceMap,
 } from "./featureExtraction.types";
-import { parsePawnChains, parsePieceAttackMap, parsePieceMap, parsePressureMap } from "./featureExtractionUtils";
+import {
+	fenToArray,
+	parsePawnChains,
+	parsePieceAttackMap,
+	parsePieceMap,
+	parsePressureMap,
+} from "./featureExtractionUtils";
 import { analyzePieces } from "./heuristics/imbalances";
 import { analyzePawns } from "./heuristics/pawns";
 
-export const runAnalysis = (chessboard: string[][]): OverallHeuristics => {
+export const runAnalysis = (fen: string): OverallHeuristics => {
+	const chessboard = fenToArray(fen);
 	const imbalanceHeuristics = analyzePieces(chessboard);
 	const pawnHeuristics = analyzePawns(chessboard, imbalanceHeuristics.pressureMap);
 
