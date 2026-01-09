@@ -1,0 +1,44 @@
+.analysisPage {
+	width: 100vw;
+	height: 100vh;
+	background: #002a3c linear-gradient(#1616164f, #aaaaaa00 65%);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden;
+}
+
+.boardContainer {
+	max-height: 100%;
+	max-width: 100%;
+
+	aspect-ratio: 1 / 1;
+
+	padding: 20px;
+	border-radius: 20px;
+	border: 2px solid #9e9e9e;
+	background-color: rgba(0, 39, 90, 0.377);
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	flex-shrink: 1;
+	min-width: 0;
+}
+
+.mainContainer {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	height: 80vh;
+	gap: 2.5rem;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+}
+
+.chessboardWrapper {
+	width: 100%;
+	height: 100%;
+}

@@ -1,0 +1,81 @@
+.sidebar {
+	flex: 1;
+	height: 100%;
+	max-width: 450px;
+	background-image: linear-gradient(#001a821f, #08003500);
+	backdrop-filter: blur(10px);
+	border-radius: 20px;
+	border: 2px solid #9e9e9e;
+
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	padding: 25px;
+}
+
+.stockfishSection {
+	display: flex;
+	flex-direction: row;
+	color: white;
+
+	justify-content: center;
+	align-items: center;
+
+	padding: 10px;
+	background-color: rgba(255, 255, 255, 0.068);
+	border-radius: 20px;
+
+	flex: 1;
+}
+
+.buttonsContainer {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 15%;
+	flex: 1;
+}
+
+.stockfishEvaluation {
+	font-size: 32px;
+	text-align: center;
+	flex: 1;
+}
+
+.heuristicsContainer {
+	flex: 10;
+}
+
+.stockfishLines {
+	flex: 2;
+	display: flex;
+	flex-direction: column;
+	align-items: left;
+}
+
+.bold {
+	font-weight: 600;
+}
+
+.navigateButton {
+	background-color: #a6a6a638;
+	border-radius: 10px;
+	height: 100%;
+	width: 33%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: 100ms;
+	cursor: pointer;
+}
+
+.navigateButton:hover {
+	background-color: rgba(240, 248, 255, 0.151);
+}
+
+.icon {
+	width: 50px;
+	height: 50px;
+}
