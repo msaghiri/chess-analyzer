@@ -5,16 +5,17 @@ import type { BoardNav, BoardState } from "../types/game.types";
 export const useBoardNavigation = (): BoardNav => {
 	const { gamePositions } = useAnalysisContext();
 	const [currentIndex, setCurrentIndex] = useState(0);
+	const [boardOrientation, setBoardOrientation] = useState("white" as "white" | "black");
 
+	const flipBoard = () => {
+		const orientation = boardOrientation === "white" ? "black" : "white";
+		setBoardOrientation(orientation);
+	};
 	const nextMove = () => {
-		setCurrentIndex((index) =>
-			index < gamePositions.length - 1 ? index + 1 : 0
-		);
+		setCurrentIndex((index) => (index < gamePositions.length - 1 ? index + 1 : 0));
 	};
 	const prevMove = () => {
-		setCurrentIndex((index) =>
-			index > 0 ? index - 1 : gamePositions.length - 1
-		);
+		setCurrentIndex((index) => (index > 0 ? index - 1 : gamePositions.length - 1));
 	};
 
 	const currentPosition: BoardState = {
@@ -22,5 +23,5 @@ export const useBoardNavigation = (): BoardNav => {
 		index: currentIndex,
 	};
 
-	return { currentPosition, nextMove, prevMove, gamePositions };
+	return { currentPosition, boardOrientation, nextMove, prevMove, flipBoard, gamePositions };
 };

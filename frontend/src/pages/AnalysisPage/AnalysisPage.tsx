@@ -9,13 +9,14 @@ const AnalysisPage = () => {
 	return (
 		<div className={styles.analysisPage}>
 			<div className={styles.mainContainer}>
-				<main className={styles.boardContainer}>
-					<div className={styles.chessboardWrapper}>
+				<div className={styles.leftSection}>
+					<div className={styles.boardWrapper}>
 						<BoardViewer boardInfo={boardNav} />
 					</div>
-				</main>
-
-				<AnalysisDetails boardInfo={boardNav} />
+				</div>
+				<div className={styles.rightSection}>
+					<AnalysisDetails boardInfo={boardNav} />
+				</div>
 			</div>
 		</div>
 	);

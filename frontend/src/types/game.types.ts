@@ -7,7 +7,7 @@ export interface GamePosition {
 //for a single given move
 export interface EvaluationObject {
 	depth: number; //i think we should use seldepth for this, maybe time in the future?
-	move: string;
+	line: string[];
 	evaluation: number;
 }
 
@@ -20,11 +20,7 @@ export interface ChessGame {
 //What the analysis context returns
 export interface AnalysisContextType {
 	pgn: string;
-	loadPgn: (
-		pgn: string,
-		onLoad: () => void,
-		reportProgressTo?: (progress: number) => void
-	) => boolean;
+	loadPgn: (pgn: string, onLoad: () => void, reportProgressTo?: (progress: number) => void) => boolean;
 	gamePositions: GamePosition[];
 }
 
@@ -36,7 +32,9 @@ export interface BoardState {
 
 export interface BoardNav {
 	currentPosition: BoardState;
+	boardOrientation: "white" | "black";
 	nextMove: () => void;
 	prevMove: () => void;
+	flipBoard: () => void;
 	gamePositions: GamePosition[];
 }

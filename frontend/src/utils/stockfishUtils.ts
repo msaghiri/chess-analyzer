@@ -63,36 +63,34 @@ class StockfishService {
 		});
 	}
 
-	async analyzeGame(
-		gamePositions: GamePosition[],
-		reportProgressTo?: (progress: number) => void
-	) {
+	async analyzeGame(gamePositions: GamePosition[], reportProgressTo?: (progress: number) => void) {
 		const responses: Record<number, string[]> = {};
 
 		for (const [index, gamePosition] of gamePositions.entries()) {
 			responses[index] = await this.analyze(gamePosition.fen);
 
-			const evalObjects = responses[index].map((response) =>
-				this.parseEvaluation(response)
-			);
+			const evalObjects = responses[index].map((response) => this.parseEvaluation(response));
 			gamePositions[index].evaluation = evalObjects;
 
-			if (reportProgressTo !== undefined)
-				reportProgressTo(index / gamePositions.length);
+			if (reportProgressTo !== undefined) reportProgressTo(index / gamePositions.length);
 		}
 
 		return responses;
 	}
 
+	//example: info depth 10 seldepth 16 multipv 2 score cp -578 nodes 3235 nps 323500 hashfull 5 time 10 pv h2h3 d1g1 h1g1 c2c1 g1h2 c1g5 g3g5 h6g5 h2g3 f8d8 a2a3 g8f8 e5e6 f8e7
 	parseEvaluation(stockfishResponse: string): EvaluationObject {
 		const arr = stockfishResponse.split(" ");
 		const depth = parseInt(arr[2]);
-		const evaluation = parseFloat(arr[9]);
-		const move = arr[19];
+
+		const isMate = arr[8] === "mate";
+		const evaluation = isMate ? Infinity : parseFloat(arr[9]) / 100.0;
+
+		const line = [arr[19], arr[20], arr[21]].filter((move) => move !== undefined);
 
 		return {
 			depth,
-			move,
+			line,
 			evaluation,
 		};
 	}

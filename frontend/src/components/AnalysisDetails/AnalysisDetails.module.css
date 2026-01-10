@@ -1,81 +1,85 @@
 .sidebar {
-	flex: 1;
 	height: 100%;
-	max-width: 450px;
-	background-image: linear-gradient(#001a821f, #08003500);
-	backdrop-filter: blur(10px);
+	width: 100%;
+	background: var(--component-bg-gradient-blue);
+	border: var(--main-border-style);
 	border-radius: 20px;
-	border: 2px solid #9e9e9e;
 
 	display: flex;
 	flex-direction: column;
-	overflow: hidden;
-
-	padding: 25px;
+	padding: 20px;
+	color: var(--main-font-color);
 }
 
 .stockfishSection {
+	width: 100%;
+	height: 20%;
+
 	display: flex;
-	flex-direction: row;
-	color: white;
 
 	justify-content: center;
 	align-items: center;
 
-	padding: 10px;
-	background-color: rgba(255, 255, 255, 0.068);
+	background-color: rgba(172, 172, 172, 0.096);
 	border-radius: 20px;
+}
 
+.stockfishEvaluation {
+	height: 100%;
+	flex: 2;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	font-weight: 400;
+	font-size: var(--large-font-size);
+}
+.stockfishLines {
+	height: 100%;
+	flex: 5;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	font-weight: 300;
+	font-size: var(--main-font-size);
+}
+.bestMove {
+	color: rgb(116, 175, 170);
+}
+
+.heuristicsContainer {
 	flex: 1;
 }
 
 .buttonsContainer {
-	width: 100%;
+	height: 50px;
+
 	display: flex;
-	justify-content: center;
 	align-items: center;
-	gap: 15%;
-	flex: 1;
-}
-
-.stockfishEvaluation {
-	font-size: 32px;
-	text-align: center;
-	flex: 1;
-}
-
-.heuristicsContainer {
-	flex: 10;
-}
-
-.stockfishLines {
-	flex: 2;
-	display: flex;
-	flex-direction: column;
-	align-items: left;
-}
-
-.bold {
-	font-weight: 600;
+	justify-content: center;
+	gap: 20px;
 }
 
 .navigateButton {
-	background-color: #a6a6a638;
-	border-radius: 10px;
+	background-color: var(--main-button-color);
 	height: 100%;
-	width: 33%;
+	width: 20%;
+
 	display: flex;
-	align-items: center;
 	justify-content: center;
-	transition: 100ms;
+	align-items: center;
+	border-radius: 15px;
+
 	cursor: pointer;
+
+	transition: all;
+	transition-duration: 200ms;
 }
 
 .navigateButton:hover {
-	background-color: rgba(240, 248, 255, 0.151);
-}
-
-.icon {
-	width: 50px;
-	height: 50px;
+	background-color: var(--main-button-color-hover);
 }

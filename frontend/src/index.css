@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+:root {
+	--page-bg-gradient-blue: radial-gradient(circle at top left, rgba(255, 255, 255, 0.15), transparent 40%),
+		linear-gradient(#1616164f, #aaaaaa00 65%), #002a3c;
+	--component-bg-gradient-blue: linear-gradient(#00000013 75%, #0000002f);
+	--component-bg-solid-blue: rgba(0, 39, 90, 0.377);
+
+	--main-border-style: 1px solid #9e9e9e;
+
+	--main-button-color: #a6a6a638;
+	--main-button-color-hover: rgba(240, 248, 255, 0.151);
+
+	--main-font-color: rgb(241, 241, 241);
+	--main-font-size: 16px;
+	--large-font-size: 26px;
+
+	font-family: monospace;
+}

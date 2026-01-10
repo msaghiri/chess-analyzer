@@ -3,7 +3,7 @@ import type { BoardNav } from "../types/game.types";
 
 const constantChessboardOptions = {
 	allowDragging: false,
-	animationDurationInMs: 200,
+	animationDurationInMs: 300,
 	boardStyle: {
 		borderRadius: `4px`,
 	},
@@ -22,6 +22,7 @@ const BoardViewer = ({ boardInfo }: { boardInfo: BoardNav }) => {
 	const chessboardOptions = {
 		...constantChessboardOptions,
 		position: boardInfo.currentPosition.fen,
+		boardOrientation: boardInfo.boardOrientation,
 	};
 
 	return <Chessboard options={chessboardOptions} />;
