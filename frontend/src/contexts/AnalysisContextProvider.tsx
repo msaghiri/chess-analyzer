@@ -7,25 +7,15 @@ import { stockfish } from "../utils/stockfishUtils";
 
 import { useEffect } from "react";
 
-export const AnalysisContextProvider = ({
-	children,
-}: {
-	children: ReactNode;
-}) => {
+export const AnalysisContextProvider = ({ children }: { children: ReactNode }) => {
 	const [pgn, setPgn] = useState("");
-	const [gamePositions, setGamePositions] = useState<GamePosition[]>(
-		storage.loadGamePositions()
-	);
+	const [gamePositions, setGamePositions] = useState<GamePosition[]>(storage.loadGamePositions());
 
 	useEffect(() => {
 		stockfish.init();
 	});
 
-	const loadPgn = (
-		newPgn: string,
-		onLoad: () => void,
-		reportProgressTo?: (progress: number) => void
-	): boolean => {
+	const loadPgn = (newPgn: string, onLoad: () => void, reportProgressTo?: (progress: number) => void): boolean => {
 		try {
 			const game = createGameObject(newPgn);
 
@@ -40,8 +30,7 @@ export const AnalysisContextProvider = ({
 			return true;
 		} catch {
 			console.log(newPgn);
-			console.error("Invalid PGN");
-			return false;
+			throw new Error("Invalid PGN");
 		}
 	};
 
@@ -51,9 +40,5 @@ export const AnalysisContextProvider = ({
 		gamePositions: gamePositions,
 	};
 
-	return (
-		<AnalysisContext.Provider value={contextValue}>
-			{children}
-		</AnalysisContext.Provider>
-	);
+	return <AnalysisContext.Provider value={contextValue}>{children}</AnalysisContext.Provider>;
 };

@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom";
 import AnalysisPage from "./pages/AnalysisPage/AnalysisPage";
-import InputPGNPage from "./pages/InputPGNPage";
+import InputPGNPage from "./pages/InputPGNPage/InputPGNPage";
 import { AnalysisContextProvider } from "./contexts/AnalysisContextProvider";
 
 function AnalysisRoutes() {

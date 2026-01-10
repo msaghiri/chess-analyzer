@@ -1,0 +1,60 @@
+.pgnFormContainer {
+	background: var(--component-bg-gradient-blue);
+	width: 50%;
+	min-height: 500px;
+
+	border-radius: 20px;
+	border: var(--main-border-style);
+
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 25px;
+	padding-top: 15px;
+}
+
+.pgnHeader {
+	font-size: var(--large-font-size);
+}
+
+.pgnTextArea {
+	background: rgba(255, 255, 255, 0.151);
+	width: 80%;
+	min-height: 200px;
+	border-radius: 20px;
+	padding: 20px;
+}
+
+.pgnLoadButton {
+	cursor: pointer;
+	width: 70%;
+	height: 50px;
+	background-color: var(--main-button-color);
+	border-radius: 20px;
+
+	transition: background-color;
+	transition-duration: 100ms;
+}
+
+.pgnLoadButton:hover {
+	background-color: var(--main-button-color-hover);
+}
+
+.pgnLoadingBar {
+	height: 20px;
+	width: 75%;
+
+	background: rgba(73, 109, 129, 0.212);
+
+	border-radius: 20px;
+	overflow: hidden;
+}
+
+.filledPortion {
+	background: rgba(255, 255, 255, 0.445);
+	height: 100%;
+
+	transition: width;
+	transition-duration: 200ms;
+}
