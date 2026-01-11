@@ -134,11 +134,13 @@ export const parsePieceAttackMap = (pieceAttackMap: PieceAttackMap): ParsedPiece
 		const parsedAttackedSquaresArray: ParsedAttackedSquares[] = [];
 		attackedSquaresArray.forEach((attackedSquares) => {
 			const parsedSquares = piecePositionsToSquares(attackedSquares.squares);
+			const parsedAttackerPosition = getSquare(attackedSquares.attackerPosition);
 
 			const parsedAttackedSquares: ParsedAttackedSquares = {
 				pieceType: attackedSquares.pieceType,
 				value: attackedSquares.value,
 				squares: parsedSquares,
+				attackerPosition: parsedAttackerPosition,
 			};
 
 			parsedAttackedSquaresArray.push(parsedAttackedSquares);

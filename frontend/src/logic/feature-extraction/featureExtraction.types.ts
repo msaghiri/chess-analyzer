@@ -40,16 +40,24 @@ export interface ParsedPawnChains {
 	black: ParsedPawnChain[];
 }
 
+export interface PieceDetails {
+	type: string;
+	position: PiecePosition;
+}
 
+export interface ParsedPieceDetails {
+	type: string;
+	position: square;
+}
 
 export interface SquarePressure {
 	white: {
 		material: number;
-		pieces: string[];
+		pieces: PieceDetails[];
 	};
 	black: {
 		material: number;
-		pieces: string[];
+		pieces: PieceDetails[];
 	};
 	whiteMin: number;
 	blackMin: number;
@@ -63,12 +71,14 @@ export type ParsedPressureMap = {
 
 export interface AttackedSquares {
 	pieceType: string;
+	attackerPosition: PiecePosition;
 	value: number;
 	squares: PiecePosition[];
 }
 
 export interface ParsedAttackedSquares {
 	pieceType: string;
+	attackerPosition: square;
 	value: number;
 	squares: square[];
 }

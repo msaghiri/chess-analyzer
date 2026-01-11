@@ -20,6 +20,7 @@ import type {
 	ImbalanceHeuristics,
 	MaterialCounter,
 	PieceAttackMap,
+	PieceDetails,
 	PiecePosition,
 	PressureMap,
 } from "../featureExtraction.types";
@@ -52,6 +53,7 @@ export const getAttackedSquares = (attacker: PiecePosition, chessboard: string[]
 
 	const attackedSquares: AttackedSquares = {
 		pieceType,
+		attackerPosition: attacker,
 		value: getMaterialValue(pieceType),
 		squares,
 	};
@@ -115,11 +117,11 @@ export const getPressureMap = (pieceAttackMap: PieceAttackMap): PressureMap => {
 		Array.from({ length: FILES }, () => ({
 			white: {
 				material: 0,
-				pieces: []
+				pieces: [],
 			},
 			black: {
 				material: 0,
-				pieces: []
+				pieces: [],
 			},
 			whiteMin: -1,
 			blackMin: -1,
@@ -133,13 +135,20 @@ export const getPressureMap = (pieceAttackMap: PieceAttackMap): PressureMap => {
 		const squares = attackedSquares.squares;
 		const value = attackedSquares.value;
 		const type = attackedSquares.pieceType;
+		const attackerPosition = attackedSquares.attackerPosition;
+
+		const attacker: PieceDetails = {
+			type,
+			position: attackerPosition,
+		};
 
 		squares.forEach((square: PiecePosition) => {
 			const rank = square[RANK_INDEX];
 			const file = square[FILE_INDEX];
 
 			pressureMap[rank][file].white.material += value;
-			pressureMap[rank][file].white.pieces.push(type);
+
+			pressureMap[rank][file].white.pieces.push(attacker);
 
 			if (pressureMap[rank][file].whiteMin === -1 || pressureMap[rank][file].whiteMin > value)
 				pressureMap[rank][file].whiteMin = value;
@@ -150,13 +159,19 @@ export const getPressureMap = (pieceAttackMap: PieceAttackMap): PressureMap => {
 		const squares = attackedSquares.squares;
 		const value = attackedSquares.value;
 		const type = attackedSquares.pieceType;
+		const attackerPosition = attackedSquares.attackerPosition;
+
+		const attacker: PieceDetails = {
+			type,
+			position: attackerPosition,
+		};
 
 		squares.forEach((square: PiecePosition) => {
 			const rank = square[RANK_INDEX];
 			const file = square[FILE_INDEX];
 
 			pressureMap[rank][file].black.material += value;
-			pressureMap[rank][file].black.pieces.push(type);
+			pressureMap[rank][file].black.pieces.push(attacker);
 
 			if (pressureMap[rank][file].blackMin === -1 || pressureMap[rank][file].blackMin > value)
 				pressureMap[rank][file].blackMin = value;

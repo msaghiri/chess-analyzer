@@ -1,7 +1,7 @@
 import { Chessboard } from "react-chessboard";
 import type { BoardNav } from "../types/game.types";
 import { modes } from "../modes/modes";
-import { parseHeuristics, runAnalysis } from "../utils/feature-extraction/featureExtractionService";
+import { parseHeuristics, runAnalysis } from "../logic/feature-extraction/featureExtractionService";
 
 const constantChessboardOptions = {
 	allowDragging: false,
