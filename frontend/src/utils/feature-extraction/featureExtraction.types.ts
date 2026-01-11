@@ -40,9 +40,17 @@ export interface ParsedPawnChains {
 	black: ParsedPawnChain[];
 }
 
+
+
 export interface SquarePressure {
-	white: number;
-	black: number;
+	white: {
+		material: number;
+		pieces: string[];
+	};
+	black: {
+		material: number;
+		pieces: string[];
+	};
 	whiteMin: number;
 	blackMin: number;
 }

@@ -113,8 +113,14 @@ export const getMaterialCount = (chessboard: string[][]): MaterialCounter => {
 export const getPressureMap = (pieceAttackMap: PieceAttackMap): PressureMap => {
 	const pressureMap: PressureMap = Array.from({ length: RANKS }, () =>
 		Array.from({ length: FILES }, () => ({
-			white: 0,
-			black: 0,
+			white: {
+				material: 0,
+				pieces: []
+			},
+			black: {
+				material: 0,
+				pieces: []
+			},
 			whiteMin: -1,
 			blackMin: -1,
 		}))
@@ -126,12 +132,14 @@ export const getPressureMap = (pieceAttackMap: PieceAttackMap): PressureMap => {
 	whitePiecesAttacking.forEach((attackedSquares) => {
 		const squares = attackedSquares.squares;
 		const value = attackedSquares.value;
+		const type = attackedSquares.pieceType;
 
 		squares.forEach((square: PiecePosition) => {
 			const rank = square[RANK_INDEX];
 			const file = square[FILE_INDEX];
 
-			pressureMap[rank][file].white += value;
+			pressureMap[rank][file].white.material += value;
+			pressureMap[rank][file].white.pieces.push(type);
 
 			if (pressureMap[rank][file].whiteMin === -1 || pressureMap[rank][file].whiteMin > value)
 				pressureMap[rank][file].whiteMin = value;
@@ -141,12 +149,14 @@ export const getPressureMap = (pieceAttackMap: PieceAttackMap): PressureMap => {
 	blackPiecesAttacking.forEach((attackedSquares) => {
 		const squares = attackedSquares.squares;
 		const value = attackedSquares.value;
+		const type = attackedSquares.pieceType;
 
 		squares.forEach((square: PiecePosition) => {
 			const rank = square[RANK_INDEX];
 			const file = square[FILE_INDEX];
 
-			pressureMap[rank][file].black += value;
+			pressureMap[rank][file].black.material += value;
+			pressureMap[rank][file].black.pieces.push(type);
 
 			if (pressureMap[rank][file].blackMin === -1 || pressureMap[rank][file].blackMin > value)
 				pressureMap[rank][file].blackMin = value;
