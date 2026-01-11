@@ -32,9 +32,12 @@ export interface BoardState {
 
 export interface BoardNav {
 	currentPosition: BoardState;
+	currentMode: number;
 	boardOrientation: "white" | "black";
 	nextMove: () => void;
 	prevMove: () => void;
+	nextMode: () => void;
+	prevMode: () => void;
 	flipBoard: () => void;
 	gamePositions: GamePosition[];
 }

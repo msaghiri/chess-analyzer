@@ -1,6 +1,7 @@
 import type { BoardNav, EvaluationObject } from "../../types/game.types";
 import { Repeat2, ChevronLeft, ChevronRight } from "lucide-react";
 import styles from "./AnalysisDetails.module.css";
+import { getMode } from "./../../modes/modes";
 
 /* -------------------------------- STOCKFISH ------------------------------- */
 const StockfishLine = ({ index, line, isFirstLine }: { index: number; line: string[]; isFirstLine: boolean }) => (
@@ -15,7 +16,7 @@ const StockfishLine = ({ index, line, isFirstLine }: { index: number; line: stri
 				</span>
 			);
 		})}
-		...
+		{"..."}
 	</p>
 );
 
@@ -57,6 +58,30 @@ const NavigationControls = ({
 	</div>
 );
 
+const ModeNavigation = ({
+	currentMode,
+	nextMode,
+	prevMode,
+}: {
+	currentMode: string;
+	nextMode: () => void;
+	prevMode: () => void;
+}) => {
+	return (
+		<div className={styles.modeNavigationContainer}>
+			<button className={styles.modeButton} onClick={prevMode}>
+				<ChevronLeft size={30} />
+			</button>
+
+			<h1 className={styles.modeHeader}>{currentMode}</h1>
+
+			<button className={styles.modeButton} onClick={nextMode}>
+				<ChevronRight size={30} />
+			</button>
+		</div>
+	);
+};
+
 /* ----------------------------- MAIN COMPONENT ----------------------------- */
 const AnalysisDetails = ({ boardInfo }: { boardInfo: BoardNav }) => {
 	const idx = boardInfo.currentPosition.index;
@@ -66,10 +91,12 @@ const AnalysisDetails = ({ boardInfo }: { boardInfo: BoardNav }) => {
 	const rawScore = currentEvalData[0]?.evaluation ?? 0;
 	const displayScore = activeColor === "w" ? rawScore : rawScore * -1;
 
+	const currentMode = getMode(boardInfo.currentMode);
+
 	return (
 		<div className={styles.sidebar}>
 			<StockfishSection score={displayScore} evaluations={currentEvalData} />
-
+			<ModeNavigation currentMode={currentMode} nextMode={boardInfo.nextMode} prevMode={boardInfo.prevMode} />
 			<div className={styles.heuristicsContainer}></div>
 
 			<NavigationControls onPrev={boardInfo.prevMove} onNext={boardInfo.nextMove} flipBoard={boardInfo.flipBoard} />

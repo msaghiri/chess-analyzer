@@ -9,7 +9,6 @@ import {
 	sortPiecesByFile,
 	WHITE_PAWN,
 	BLACK_PAWN,
-	EMPTY_SQUARE,
 } from "../featureExtractionUtils";
 
 /* ---------------------------------- UTILS --------------------------------- */
@@ -118,8 +117,7 @@ const isBackwardsPawn = (
 		friendlyLeftFile: PiecePosition[];
 		friendlyRightFile: PiecePosition[];
 	},
-	pressureMap: PressureMap,
-	chessboard: string[][]
+	pressureMap: PressureMap
 ): boolean => {
 	const { friendlyLeftFile, friendlyRightFile } = friendlyFiles;
 
@@ -140,14 +138,17 @@ const isBackwardsPawn = (
 
 	if (defendedByPawnInFile(friendlyLeftFile) || defendedByPawnInFile(friendlyRightFile)) return false;
 
-	//check if the pawn is blocked
-	if (chessboard[rank + direction][file] !== EMPTY_SQUARE) return true;
-	if (pressureMap[rank + direction][file][opposingColor] > 0) return true; //might want to take defenders into consideration in the future
+	//if (chessboard[rank + direction][file] !== EMPTY_SQUARE) return true; not sure if I want to keep this
+
+	//adopting crafty engines definition -- only considered backwards if an opposing PAWN controls the square
+	const advanceSquare = pressureMap[rank + direction][file];
+	const minAttacker = opposingColor === "white" ? advanceSquare.whiteMin : advanceSquare.blackMin;
+	if (minAttacker === 1) return true; //1 is the value of a pawn
 
 	return false;
 };
 
-const getBackwardsPawns = (pawnsByFile: PieceFiles, pressureMap: PressureMap, chessboard: string[][]): PieceMap => {
+const getBackwardsPawns = (pawnsByFile: PieceFiles, pressureMap: PressureMap): PieceMap => {
 	const result: PieceMap = {
 		white: [],
 		black: [],
@@ -164,13 +165,7 @@ const getBackwardsPawns = (pawnsByFile: PieceFiles, pressureMap: PressureMap, ch
 				const friendlyLeftFile = pawns[file - 1] ?? [];
 				const friendlyRightFile = pawns[file + 1] ?? [];
 
-				const isBackward = isBackwardsPawn(
-					pawn,
-					color,
-					{ friendlyLeftFile, friendlyRightFile },
-					pressureMap,
-					chessboard
-				);
+				const isBackward = isBackwardsPawn(pawn, color, { friendlyLeftFile, friendlyRightFile }, pressureMap);
 
 				if (isBackward) result[color].push(pawn);
 			}
@@ -281,7 +276,7 @@ export const analyzePawns = (chessboard: string[][], pressureMap: PressureMap): 
 	const passedPawns = getPassedPawns(pawnsByFile);
 	const pawnChains = getPawnChains(pawnsByFile);
 	const isolatedPawns = getIsolatedPawns(pawnsByFile);
-	const backwardsPawns = getBackwardsPawns(pawnsByFile, pressureMap, chessboard);
+	const backwardsPawns = getBackwardsPawns(pawnsByFile, pressureMap);
 
 	return { passedPawns, pawnChains, isolatedPawns, backwardsPawns };
 };

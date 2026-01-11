@@ -36,6 +36,7 @@
 	font-size: var(--large-font-size);
 }
 .stockfishLines {
+	font-family: monospace;
 	height: 100%;
 	flex: 5;
 
@@ -44,11 +45,44 @@
 	align-items: center;
 	justify-content: center;
 
-	font-weight: 300;
 	font-size: var(--main-font-size);
 }
+.stockfishLine {
+	width: 100%;
+}
+
 .bestMove {
 	color: rgb(116, 175, 170);
+}
+
+.modeNavigationContainer {
+	cursor: default;
+
+	width: 100%;
+	padding-top: 15px;
+	height: fit;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.modeHeader {
+	text-align: center;
+	font-size: 18px;
+	color: var(--main-font-color);
+	width: 50%;
+}
+
+.modeButton {
+	cursor: pointer;
+	border-radius: 100%;
+
+	transition: background-color;
+	transition-duration: 100ms;
+}
+.modeButton:hover {
+	background-color: rgba(167, 167, 167, 0.171);
 }
 
 .heuristicsContainer {

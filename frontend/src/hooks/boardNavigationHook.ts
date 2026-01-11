@@ -1,10 +1,12 @@
 import useAnalysisContext from "./useAnalysisContext";
 import { useState } from "react";
 import type { BoardNav, BoardState } from "../types/game.types";
+import { modes, NUM_MODES } from "../modes/modes";
 
 export const useBoardNavigation = (): BoardNav => {
 	const { gamePositions } = useAnalysisContext();
 	const [currentIndex, setCurrentIndex] = useState(0);
+	const [currentMode, setCurrentMode] = useState(modes.PAWNS);
 	const [boardOrientation, setBoardOrientation] = useState("white" as "white" | "black");
 
 	const flipBoard = () => {
@@ -18,10 +20,35 @@ export const useBoardNavigation = (): BoardNav => {
 		setCurrentIndex((index) => (index > 0 ? index - 1 : gamePositions.length - 1));
 	};
 
+	const nextMode = () => {
+		if (currentMode < NUM_MODES - 1) {
+			setCurrentMode((m) => m + 1);
+		} else {
+			setCurrentMode(0);
+		}
+	};
+	const prevMode = () => {
+		if (currentMode > 0) {
+			setCurrentMode((m) => m - 1);
+		} else {
+			setCurrentMode(NUM_MODES - 1);
+		}
+	};
+
 	const currentPosition: BoardState = {
 		fen: gamePositions[currentIndex].fen,
 		index: currentIndex,
 	};
 
-	return { currentPosition, boardOrientation, nextMove, prevMove, flipBoard, gamePositions };
+	return {
+		currentPosition,
+		currentMode,
+		boardOrientation,
+		nextMove,
+		prevMove,
+		nextMode,
+		prevMode,
+		flipBoard,
+		gamePositions,
+	};
 };
