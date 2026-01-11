@@ -9,7 +9,7 @@ class RulesEngine {
 	private heuristics: OverallHeuristics | undefined;
 	private parsedHeuristics: ParsedOverallHeuristics | undefined; //for when its more convenient to deal with square rather than PiecePosition
 
-	RulesEngine() {}
+	constructor() {}
 
 	public init(fen: string) {
 		try {
