@@ -106,11 +106,7 @@ const SingleRule = ({ rule }: { rule: RuleResult }) => {
 				</button>
 			</div>
 			<div className={styles.ruleContainerBody}>
-				<ul>
-					{ruleMessages.map((message) => (
-						<li>- {message}</li>
-					))}
-				</ul>
+				{ruleMessages.map((m) => <p className={styles.actualRule}>{m}</p>)}
 			</div>
 		</div>
 	);

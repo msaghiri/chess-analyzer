@@ -8,7 +8,7 @@
 }
 
 .mainContainer {
-	height: 80vh;
+	min-height: 80vh;
 	display: grid;
 	grid-template-columns: 4fr 2fr;
 	overflow: hidden;
