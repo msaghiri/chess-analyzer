@@ -35,3 +35,12 @@
 	padding: 15px;
 	max-width: 750px;
 }
+
+@media (max-width: 1150px) {
+	.leftSection {
+		min-width: 500px;
+	}
+	.mainContainer {
+		min-height: 600px;
+	}
+}

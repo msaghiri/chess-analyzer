@@ -86,39 +86,63 @@ const ModeNavigation = ({
 
 /* --------------------------- HEURISTICS SECTION --------------------------- */
 
-const SingleRule = ({ rule }: { rule: RuleResult }) => {
-	const [expanded, setExpanded] = useState(false);
-
+const SingleRule = ({
+	rule,
+	setExpanded,
+	expanded,
+	index,
+}: {
+	rule: RuleResult;
+	setExpanded: (i: number) => void;
+	expanded: boolean;
+	index: number;
+}) => {
 	const ruleName = rule.ruleName;
 	const ruleMessages = rule.messages;
 	const ruleCategory = rule.severity;
 
-	const toggleExpand = () => {
-		setExpanded((e) => !e);
+	const handleExpansion = () => {
+		if (expanded) {
+			setExpanded(-1);
+		} else {
+			setExpanded(index);
+		}
 	};
 
 	return (
 		<div className={`${styles.ruleContainer} ${expanded ? styles.ruleContainerExpanded : ""}`}>
 			<div className={styles.ruleContainerHeader}>
 				<h1 className={styles.ruleName}>{ruleName}</h1>
-				<button className={styles.expandButton} onClick={toggleExpand}>
+				<button className={styles.expandButton} onClick={handleExpansion}>
 					<ChevronDown />
 				</button>
 			</div>
 			<div className={styles.ruleContainerBody}>
-				{ruleMessages.map((m) => <p className={styles.actualRule}>{m}</p>)}
+				{ruleMessages.map((m) => (
+					<p className={styles.actualRule}>● {m}</p>
+				))}
 			</div>
 		</div>
 	);
 };
 
 const HeuristicsSection = ({ ruleResults }: { ruleResults: RuleResult[] }) => {
-	const pawnRules = ruleResults; //right now we only have one rule (a pawn rule), later we will split by category and stuff
+	const [expanded, setExpanded] = useState(-1);
+
+	const handleSetExpanded = (i: number) => {
+		setExpanded(i);
+	};
 
 	return (
 		<div className={styles.heuristicsContainer}>
-			{ruleResults.map((rule) => (
-				<SingleRule rule={rule} />
+			{ruleResults.map((rule, index) => (
+				<SingleRule
+					rule={rule}
+					key={index}
+					index={index}
+					setExpanded={handleSetExpanded}
+					expanded={index === expanded}
+				/>
 			))}
 		</div>
 	);
@@ -132,7 +156,8 @@ const AnalysisDetails = ({ boardInfo }: { boardInfo: BoardNav }) => {
 	const currentRuleResults = boardInfo.gamePositions[idx].ruleResults;
 
 	const rawScore = currentEvalData[0]?.evaluation ?? 0;
-	const displayScore = activeColor === "w" ? rawScore : rawScore * -1;
+	let displayScore = activeColor === "w" ? rawScore : rawScore * -1;
+	if (displayScore === Infinity || displayScore === -Infinity) displayScore = 0; //for now
 
 	const currentMode = getMode(boardInfo.currentMode);
 
