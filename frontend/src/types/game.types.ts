@@ -1,7 +1,10 @@
+import type { RuleResult } from "../logic/rules-engine/types/rules.types";
+
 //actual positions
 export interface GamePosition {
 	fen: string;
 	evaluation: EvaluationObject[];
+	ruleResults: RuleResult[];
 }
 
 //for a single given move

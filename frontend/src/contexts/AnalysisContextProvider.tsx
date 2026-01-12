@@ -6,6 +6,7 @@ import { createGameObject } from "../utils/chessUtils";
 import { stockfish } from "../utils/stockfishUtils";
 
 import { useEffect } from "react";
+import { RulesEngine } from "../logic/rules-engine/rulesEngine";
 
 export const AnalysisContextProvider = ({ children }: { children: ReactNode }) => {
 	const [pgn, setPgn] = useState("");
@@ -13,16 +14,31 @@ export const AnalysisContextProvider = ({ children }: { children: ReactNode }) =
 
 	useEffect(() => {
 		stockfish.init();
-	});
+	}, []);
+
+	const engine = new RulesEngine();
 
 	const loadPgn = (newPgn: string, onLoad: () => void, reportProgressTo?: (progress: number) => void): boolean => {
 		try {
 			const game = createGameObject(newPgn);
 
 			stockfish.analyzeGame(game.gamePositions, reportProgressTo).then(() => {
+				for (let i = 0; i < game.gamePositions.length; i++) {
+					const fen = game.gamePositions[i].fen;
+					if (!engine.getIsInitialized()) {
+						engine.init(fen);
+					} else {
+						engine.setPosition(fen);
+					}
+
+					const currentPositionRuleResults = engine.runAnalysis();
+
+					game.gamePositions[i].ruleResults = currentPositionRuleResults;
+				}
+
 				setGamePositions(game.gamePositions);
 				setPgn(game.pgn);
-				storage.saveGame(game.pgn, game.gamePositions);
+				//storage.saveGame(game.pgn, game.gamePositions); //i think it might be wise not to use localstorage for now
 
 				onLoad();
 			});

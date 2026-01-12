@@ -1,7 +1,7 @@
 .analysisPage {
 	background: var(--page-bg-gradient-blue);
 	height: 100vh;
-
+	width: 100vw;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -11,6 +11,7 @@
 	height: 80vh;
 	display: grid;
 	grid-template-columns: 4fr 2fr;
+	overflow: hidden;
 	gap: 20px;
 }
 

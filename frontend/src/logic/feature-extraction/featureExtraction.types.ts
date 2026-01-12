@@ -52,14 +52,14 @@ export interface ParsedPieceDetails {
 
 export interface SquarePressure {
 	white: {
-		material: number;
-		pieces: PieceDetails[];
+		material: number; //total material attacking this square
+		pieces: PieceDetails[]; //pieces attacking this square
 	};
 	black: {
 		material: number;
 		pieces: PieceDetails[];
 	};
-	whiteMin: number;
+	whiteMin: number; //least valuable piece attacking this square
 	blackMin: number;
 }
 

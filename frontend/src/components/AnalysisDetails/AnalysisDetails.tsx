@@ -1,7 +1,9 @@
-import type { BoardNav, EvaluationObject } from "../../types/game.types";
-import { Repeat2, ChevronLeft, ChevronRight } from "lucide-react";
+import type { BoardNav, EvaluationObject, GamePosition } from "../../types/game.types";
+import { Repeat2, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import styles from "./AnalysisDetails.module.css";
 import { getMode } from "./../../modes/modes";
+import type { RuleResult } from "../../logic/rules-engine/types/rules.types";
+import { useState } from "react";
 
 /* -------------------------------- STOCKFISH ------------------------------- */
 const StockfishLine = ({ index, line, isFirstLine }: { index: number; line: string[]; isFirstLine: boolean }) => (
@@ -82,11 +84,56 @@ const ModeNavigation = ({
 	);
 };
 
+/* --------------------------- HEURISTICS SECTION --------------------------- */
+
+const SingleRule = ({ rule }: { rule: RuleResult }) => {
+	const [expanded, setExpanded] = useState(false);
+
+	const ruleName = rule.ruleName;
+	const ruleMessages = rule.messages;
+	const ruleCategory = rule.severity;
+
+	const toggleExpand = () => {
+		setExpanded((e) => !e);
+	};
+
+	return (
+		<div className={`${styles.ruleContainer} ${expanded ? styles.ruleContainerExpanded : ""}`}>
+			<div className={styles.ruleContainerHeader}>
+				<h1 className={styles.ruleName}>{ruleName}</h1>
+				<button className={styles.expandButton} onClick={toggleExpand}>
+					<ChevronDown />
+				</button>
+			</div>
+			<div className={styles.ruleContainerBody}>
+				<ul>
+					{ruleMessages.map((message) => (
+						<li>- {message}</li>
+					))}
+				</ul>
+			</div>
+		</div>
+	);
+};
+
+const HeuristicsSection = ({ ruleResults }: { ruleResults: RuleResult[] }) => {
+	const pawnRules = ruleResults; //right now we only have one rule (a pawn rule), later we will split by category and stuff
+
+	return (
+		<div className={styles.heuristicsContainer}>
+			{ruleResults.map((rule) => (
+				<SingleRule rule={rule} />
+			))}
+		</div>
+	);
+};
+
 /* ----------------------------- MAIN COMPONENT ----------------------------- */
 const AnalysisDetails = ({ boardInfo }: { boardInfo: BoardNav }) => {
 	const idx = boardInfo.currentPosition.index;
 	const activeColor = boardInfo.currentPosition.fen.split(" ")[1];
 	const currentEvalData = boardInfo.gamePositions[idx].evaluation;
+	const currentRuleResults = boardInfo.gamePositions[idx].ruleResults;
 
 	const rawScore = currentEvalData[0]?.evaluation ?? 0;
 	const displayScore = activeColor === "w" ? rawScore : rawScore * -1;
@@ -97,7 +144,7 @@ const AnalysisDetails = ({ boardInfo }: { boardInfo: BoardNav }) => {
 		<div className={styles.sidebar}>
 			<StockfishSection score={displayScore} evaluations={currentEvalData} />
 			<ModeNavigation currentMode={currentMode} nextMode={boardInfo.nextMode} prevMode={boardInfo.prevMode} />
-			<div className={styles.heuristicsContainer}></div>
+			<HeuristicsSection ruleResults={currentRuleResults} />
 
 			<NavigationControls onPrev={boardInfo.prevMove} onNext={boardInfo.nextMove} flipBoard={boardInfo.flipBoard} />
 		</div>

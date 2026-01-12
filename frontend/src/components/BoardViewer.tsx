@@ -21,28 +21,13 @@ const constantChessboardOptions = {
 };
 
 const BoardViewer = ({ boardInfo }: { boardInfo: BoardNav }) => {
-	const currentMode = boardInfo.currentMode;
-	const fen = boardInfo.currentPosition.fen;
-
-	const squareStyles: { [key: string]: object } = {};
-
-	const rawHeuristics = runAnalysis(fen);
-	const parsedHeuristics = parseHeuristics(rawHeuristics);
-	const whiteBackwardsPawns = parsedHeuristics.pawnHeuristics.backwardsPawns.white;
-
-	if (currentMode === modes.PAWNS) {
-		for (let i = 0; i < whiteBackwardsPawns.length; i++) {
-			squareStyles[whiteBackwardsPawns[i]] = {
-				backgroundColor: "rgb(255, 0, 0)",
-			};
-		}
-	}
+	//const currentMode = boardInfo.currentMode;
+	//const currentOrientation = boardInfo.boardOrientation; <-- will be useful later for displaying important things
 
 	const chessboardOptions = {
 		...constantChessboardOptions,
 		position: boardInfo.currentPosition.fen,
 		boardOrientation: boardInfo.boardOrientation,
-		squareStyles: squareStyles,
 	};
 
 	return <Chessboard options={chessboardOptions} />;

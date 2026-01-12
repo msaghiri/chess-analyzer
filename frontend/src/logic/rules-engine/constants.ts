@@ -5,7 +5,15 @@ export const centralTypes = {
 	CENTRAL_FILE: 2,
 } as const;
 
-export type centralType = (typeof centralTypes)[keyof typeof centralTypes];
+export type CentralType = (typeof centralTypes)[keyof typeof centralTypes];
+
+export const phases = {
+	OPENING: 0,
+	MIDDLEGAME: 1,
+	ENDGAME: 2,
+};
+
+export type GamePhase = (typeof phases)[keyof typeof phases];
 
 export const CENTRAL_FILES = ["c", "d", "e", "f"];
 export const SMALL_CENTER_SQUARES = ["e4", "d4", "e5", "d5"];

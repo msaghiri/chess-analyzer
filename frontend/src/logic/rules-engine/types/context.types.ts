@@ -1,39 +1,30 @@
-// rules-engine/types/context.types.ts
-import type { OverallHeuristics, ParsedOverallHeuristics } from "../../feature-extraction/featureExtraction.types";
+import type {
+	OverallHeuristics,
+	ParsedOverallHeuristics,
+	PiecePosition,
+	square,
+} from "../../feature-extraction/featureExtraction.types";
+import type { CentralType, GamePhase } from "../constants";
 
-export interface WeakSquareinfo {
-	square: square;
-	cannotBeDefendedByPawn: boolean;
+export interface WeakSquareInfo {
+	square: PiecePosition;
 	controlledByOpponent: boolean;
-	inEnemyTerritory: boolean;
+	nearKing: boolean;
+	centrality: CentralType;
 }
 
 export interface OutpostInfo {
 	square: square;
 	piece: string;
-	piecePosition: square;
+	piecePosition: PiecePosition;
 	protectedByPawn: boolean;
 	cannotBeAttackedByPawn: boolean;
 	inEnemyTerritory: boolean;
 }
 
-export interface OverallContext {
+export interface EnrichedContext {
 	fen: string;
 	heuristics: OverallHeuristics;
 	parsedHeuristics: ParsedOverallHeuristics;
-
-	weakSquares: {
-		white: WeakSquareInfo[];
-		black: WeakSquareInfo[];
-	};
-
-	outposts: {
-		white: OutpostInfo[];
-		black: OutpostInfo[];
-	};
-
-	pawnIslands: {
-		white: number;
-		black: number;
-	};
+	gamePhase: GamePhase;
 }
