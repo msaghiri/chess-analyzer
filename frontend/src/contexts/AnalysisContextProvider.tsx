@@ -12,6 +12,8 @@ export const AnalysisContextProvider = ({ children }: { children: ReactNode }) =
 	const [pgn, setPgn] = useState("");
 	const [gamePositions, setGamePositions] = useState<GamePosition[]>(storage.loadGamePositions());
 
+	//const navigate = useNavigate();
+
 	useEffect(() => {
 		stockfish.init();
 	}, []);
@@ -38,14 +40,13 @@ export const AnalysisContextProvider = ({ children }: { children: ReactNode }) =
 
 				setGamePositions(game.gamePositions);
 				setPgn(game.pgn);
-				//storage.saveGame(game.pgn, game.gamePositions); //i think it might be wise not to use localstorage for now
+				storage.saveGame(game.pgn, game.gamePositions); //i think it might be wise not to use localstorage for now
 
 				onLoad();
 			});
 
 			return true;
 		} catch {
-			console.log(newPgn);
 			throw new Error("Invalid PGN");
 		}
 	};

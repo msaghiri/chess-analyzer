@@ -1,6 +1,6 @@
 //THIS IS A TEMPORARY SOLUTION
-import type { GamePosition } from "../types/game.types";
 import { DEFAULT_POSITION } from "chess.js";
+import type { GamePosition } from "../types/game.types";
 
 //pull the game currently in localStorage
 const loadGamePositions = (): GamePosition[] => {
@@ -15,6 +15,7 @@ const loadGamePositions = (): GamePosition[] => {
 			{
 				fen: DEFAULT_POSITION,
 				evaluation: [],
+				ruleResults: [],
 			},
 		];
 	}

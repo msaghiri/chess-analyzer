@@ -1,5 +1,6 @@
 import { getSquare } from "../../feature-extraction/featureExtractionUtils";
-import { phases } from "../constants";
+import { phases, vulnerabilityMetrics } from "../constants";
+import { isPieceVulnerable } from "../rulesEngineUtils";
 import type { EnrichedContext } from "../types/context.types";
 import type { Rule, RuleResult } from "../types/rules.types";
 
@@ -25,6 +26,10 @@ function evaluatePassedPawns(enrichedContext: EnrichedContext): RuleResult[] {
 			let importance = 1;
 			let isIsolated = false;
 			const messages = [];
+
+			const [rank, file] = pawnPosition;
+			const squarePressure = pressureMap[rank][file];
+			const friendlySquarePressure = squarePressure[color];
 
 			/* --------------------------------- GAME PHASE -------------------------------- */
 			switch (enrichedContext.gamePhase) {
@@ -70,9 +75,7 @@ function evaluatePassedPawns(enrichedContext: EnrichedContext): RuleResult[] {
 			}
 
 			/* ----------------------------- DEFENDED BY PAWN ---------------------------- */
-			const [rank, file] = pawnPosition;
-			const squarePressure = pressureMap[rank][file][color];
-			const isDefendedByPawn = squarePressure.pieces.some((p) => p.type.toLowerCase() === "p");
+			const isDefendedByPawn = friendlySquarePressure.pieces.some((p) => p.type.toLowerCase() === "p");
 			if (isDefendedByPawn) {
 				importance += 0.3;
 				messages.push(`The pawn on ${pawnSquare} is well-supported by another pawn.`);
@@ -86,6 +89,24 @@ function evaluatePassedPawns(enrichedContext: EnrichedContext): RuleResult[] {
 			} else {
 				severity = "minor";
 			}
+
+			/* --------------------------- GOING TO BE TAKEN? --------------------------- */
+			const isPawnVulnerable = isPieceVulnerable(color, squarePressure, 1);
+			if (isPawnVulnerable != vulnerabilityMetrics.SAFE) {
+				messages.push();
+				severity = "minor";
+
+				results.push({
+					ruleId: "PASSED_PAWN",
+					ruleName: "Passed Pawn",
+					severity: severity,
+					color: color,
+					messages: [`The pawn on ${pawnSquare} is passed, however is immediately vulnerable to capture.`],
+					affectedSquares: [pawnPosition],
+					parsedAffectedSquares: [pawnSquare],
+				});
+				return;
+			} //edge case where having a passed pawn honestly does not matter
 
 			const ruleResult: RuleResult = {
 				ruleId: "PASSED_PAWN",

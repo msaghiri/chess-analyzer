@@ -15,6 +15,14 @@ export const phases = {
 
 export type GamePhase = (typeof phases)[keyof typeof phases];
 
+export const vulnerabilityMetrics = {
+	HANGING: 0,
+	LOSE_MATERIAL: 1,
+	CAN_BE_TRADED: 2,
+	SAFE: 3,
+};
+export type vulnerabilityMetric = (typeof vulnerabilityMetrics)[keyof typeof vulnerabilityMetrics];
+
 export const CENTRAL_FILES = ["c", "d", "e", "f"];
 export const SMALL_CENTER_SQUARES = ["e4", "d4", "e5", "d5"];
 export const BIG_CENTER_SQUARES = ["c3", "d3", "e3", "f3", "f4", "f5", "f6", "e6", "d6", "c4", "c5", "c6"];

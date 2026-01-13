@@ -2,9 +2,14 @@ import styles from "./AnalysisPage.module.css";
 import BoardViewer from "../../components/BoardViewer";
 import AnalysisDetails from "../../components/AnalysisDetails/AnalysisDetails";
 import { useBoardNavigation } from "../../hooks/boardNavigationHook";
+import { Navigate } from "react-router-dom";
 
 const AnalysisPage = () => {
 	const boardNav = useBoardNavigation();
+
+	if (boardNav.gamePositions.length <= 1) {
+		return <Navigate to="/input" />;
+	}
 
 	return (
 		<div className={styles.analysisPage}>

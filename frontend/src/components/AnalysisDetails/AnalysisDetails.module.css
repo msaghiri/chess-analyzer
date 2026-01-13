@@ -129,13 +129,25 @@
 	overflow: hidden;
 	flex-wrap: wrap;
 }
-.actualRule{
+.actualRule {
 	width: 275px;
 	height: auto;
 	overflow-wrap: break-word;
 	display: block;
 }
 
+[data-category="critical"] {
+	background-color: rgba(85, 21, 21, 0.253);
+}
+[data-category="significant"] {
+	background-color: rgba(168, 116, 18, 0.212);
+}
+[data-category="minor"] {
+	background-color: rgba(124, 124, 29, 0.185);
+}
+[data-category="positive"] {
+	background-color: rgba(24, 95, 24, 0.281);
+}
 
 .ruleContainerBody {
 	padding-left: 10px;

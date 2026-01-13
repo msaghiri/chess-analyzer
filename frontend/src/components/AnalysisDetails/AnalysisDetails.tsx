@@ -1,4 +1,4 @@
-import type { BoardNav, EvaluationObject, GamePosition } from "../../types/game.types";
+import type { BoardNav, EvaluationObject } from "../../types/game.types";
 import { Repeat2, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import styles from "./AnalysisDetails.module.css";
 import { getMode } from "./../../modes/modes";
@@ -110,7 +110,10 @@ const SingleRule = ({
 	};
 
 	return (
-		<div className={`${styles.ruleContainer} ${expanded ? styles.ruleContainerExpanded : ""}`}>
+		<div
+			data-category={ruleCategory}
+			className={`${styles.ruleContainer} ${expanded ? styles.ruleContainerExpanded : ""}`}
+		>
 			<div className={styles.ruleContainerHeader}>
 				<h1 className={styles.ruleName}>{ruleName}</h1>
 				<button className={styles.expandButton} onClick={handleExpansion}>

@@ -46,10 +46,10 @@ export const PGNForm = () => {
 	};
 
 	const handleLoadPgn = () => {
-		if (pgn.length) {
+		if (pgn.trim().length) {
 			setIsLoading(true);
 			try {
-				loadPgn(pgn, handleOnLoad, handleSetProgress);
+				loadPgn(pgn.trim(), handleOnLoad, handleSetProgress);
 			} catch {
 				setIsLoading(false);
 			}
