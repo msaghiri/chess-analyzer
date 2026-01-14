@@ -74,3 +74,12 @@ export const getPieceCentrality = (piecePosition: square): CentralType => {
 
 	return centralTypes.NOT_CENTRAL;
 };
+
+export const toPlay = (fen: string): "white" | "black" => {
+	const parts = fen.split(" ");
+	return parts[1] === "w" ? "white" : "black";
+};
+
+export const capitalize = (s: string): string => {
+	return s.charAt(0).toUpperCase() + s.slice(1);
+};

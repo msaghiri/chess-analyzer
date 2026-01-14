@@ -1,7 +1,7 @@
 import type { SquarePressure } from "../../feature-extraction/featureExtraction.types";
 import { getSquare } from "../../feature-extraction/featureExtractionUtils";
 import { centralTypes, phases, vulnerabilityMetrics, type CentralType } from "../constants";
-import { getPieceCentrality, isPieceVulnerable } from "../rulesEngineUtils";
+import { capitalize, getPieceCentrality, isPieceVulnerable } from "../rulesEngineUtils";
 import type { EnrichedContext } from "../types/context.types";
 import type { Rule, RuleResult, Severity } from "../types/rules.types";
 
@@ -199,4 +199,75 @@ function evaluateIsolatedPawns(enrichedContext: EnrichedContext): RuleResult[] {
 	return isolatedPawnRuleResults;
 }
 
-export const pawnRules: Rule[] = [PassedPawnRule, IsolatedPawnRule];
+export const BackwardsPawnRule: Rule = {
+	id: "BACKWARDS_PAWN",
+	displayName: "Backwards Pawn",
+	category: "pawn",
+	evaluate: evaluateBackwardsPawns,
+};
+
+function evaluateBackwardsPawns(enrichedContext: EnrichedContext): RuleResult[] {
+	const backwardsPawnRuleResults: RuleResult[] = [];
+
+	const backwardsPawns = enrichedContext.parsedHeuristics.pawnHeuristics.backwardsPawns;
+	const whiteBackwardsPawns = backwardsPawns.white;
+	const blackBackwardsPawns = backwardsPawns.black;
+	const pressureMap = enrichedContext.parsedHeuristics.imbalanceHeuristics.pressureMap;
+	const gamePhase = enrichedContext.gamePhase;
+
+	const processColor = (color: "white" | "black"): RuleResult[] => {
+		const colorBackwardsPawnRuleResults: RuleResult[] = [];
+		const currentBackwardsPawns = color === "white" ? whiteBackwardsPawns : blackBackwardsPawns;
+
+		currentBackwardsPawns.forEach((pawn) => {
+			let severity: Severity = "minor";
+			const messages: string[] = [];
+
+			const pawnSquarePressure: SquarePressure = pressureMap[pawn];
+			const pawnCentrality: CentralType = getPieceCentrality(pawn);
+
+			const vulnerability = isPieceVulnerable(color, pawnSquarePressure, 1);
+			if (vulnerability === vulnerabilityMetrics.HANGING) {
+				severity = "significant";
+				messages.push(`${capitalize(color)}'s backwards pawn on ${pawn} is under attack.`);
+			}
+
+			if (gamePhase === phases.ENDGAME) {
+				severity = "significant";
+				messages.push(`The endgame makes the backwards pawn on ${pawn} a clear target.`);
+			}
+
+			if (pawnCentrality !== centralTypes.NOT_CENTRAL) {
+				messages.push(`The backwards pawn on ${pawn} is a weakness in the center.`);
+			}
+
+			if (messages.length === 0) {
+				messages.push(`${capitalize(color)} has a backwards pawn on ${pawn}.`);
+			}
+
+			const currentPawnRuleResult: RuleResult = {
+				ruleId: BackwardsPawnRule.id,
+				ruleName: BackwardsPawnRule.displayName,
+				severity,
+				color,
+				messages: messages.slice(0, 3),
+				affectedSquares: [],
+				parsedAffectedSquares: [pawn],
+			};
+
+			colorBackwardsPawnRuleResults.push(currentPawnRuleResult);
+		});
+
+		return colorBackwardsPawnRuleResults;
+	};
+
+	const whiteBackwardsPawnRuleResults = processColor("white");
+	const blackBackwardsPawnRuleResults = processColor("black");
+
+	backwardsPawnRuleResults.push(...whiteBackwardsPawnRuleResults);
+	backwardsPawnRuleResults.push(...blackBackwardsPawnRuleResults);
+
+	return backwardsPawnRuleResults;
+}
+
+export const pawnRules: Rule[] = [PassedPawnRule, IsolatedPawnRule, BackwardsPawnRule];

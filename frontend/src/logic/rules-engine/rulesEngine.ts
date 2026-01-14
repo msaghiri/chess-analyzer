@@ -6,6 +6,7 @@ import type { GamePhase } from "./constants";
 import { pawnRules } from "./rules/pawnRules";
 import type { RuleResult, RuleResults } from "./types/rules.types";
 import { imbalanceRules } from "./rules/imbalanceRules";
+import { toPlay } from "./rulesEngineUtils";
 
 export class RulesEngine {
 	private previousFen: string | undefined;
@@ -52,13 +53,16 @@ export class RulesEngine {
 	private buildEnrichedContext(): EnrichedContext {
 		if (this.fen === undefined || this.heuristics === undefined || this.parsedHeuristics === undefined)
 			throw new Error("Rules engine improperly initialized.");
+
 		const phase: GamePhase = getGamePhase(this.heuristics.imbalanceHeuristics.materialCount);
+		const turn: "white" | "black" = toPlay(this.fen);
 
 		return {
 			fen: this.fen,
 			heuristics: this.heuristics,
 			parsedHeuristics: this.parsedHeuristics,
 			gamePhase: phase,
+			toPlay: turn,
 		};
 	}
 

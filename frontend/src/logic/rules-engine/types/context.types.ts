@@ -27,4 +27,5 @@ export interface EnrichedContext {
 	heuristics: OverallHeuristics;
 	parsedHeuristics: ParsedOverallHeuristics;
 	gamePhase: GamePhase;
+	toPlay: "white" | "black";
 }
