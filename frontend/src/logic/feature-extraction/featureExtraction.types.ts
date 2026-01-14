@@ -83,6 +83,20 @@ export interface ParsedAttackedSquares {
 	squares: square[];
 }
 
+export interface DefendedSquares {
+	pieceType: string;
+	defenderPosition: PiecePosition;
+	value: number;
+	squares: PiecePosition[];
+}
+
+export interface ParsedDefendedSquares {
+	pieceType: string;
+	defenderPosition: PiecePosition;
+	value: number;
+	squares: square[];
+}
+
 export type PieceAttackMap = {
 	white: AttackedSquares[];
 	black: AttackedSquares[];
@@ -91,6 +105,16 @@ export type PieceAttackMap = {
 export type ParsedPieceAttackMap = {
 	white: ParsedAttackedSquares[];
 	black: ParsedAttackedSquares[];
+};
+
+export type PieceDefenseMap = {
+	white: DefendedSquares[];
+	black: DefendedSquares[];
+};
+
+export type ParsedPieceDefenseMap = {
+	white: ParsedDefendedSquares[];
+	black: ParsedDefendedSquares[];
 };
 
 export type MaterialCounter = {

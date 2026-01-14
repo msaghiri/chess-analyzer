@@ -489,3 +489,202 @@ export const getKingMoves = (chessboard: string[][], kingPosition: PiecePosition
 
 	return kingMoves;
 };
+
+/* -------------------------------- DEFENSES -------------------------------- */
+export const getBishopDefending = (chessboard: string[][], bishopPosition: PiecePosition): PiecePosition[] => {
+	const bishopDefending: PiecePosition[] = [];
+
+	const rank = bishopPosition[RANK_INDEX];
+	const file = bishopPosition[FILE_INDEX];
+	const color = getColor(chessboard[rank][file]);
+
+	//to bottom right
+	let currRank = rank + 1;
+	let currFile = file + 1;
+
+	while (currRank < RANKS && currFile < FILES) {
+		const square = chessboard[currRank][currFile];
+		const squarePosition = [currRank, currFile];
+		const squareState = getSquareState(square, color);
+
+		if (squareState === squareStates.OCCUPIED_FRIENDLY) {
+			bishopDefending.push(squarePosition);
+			break;
+		}
+
+		currRank++;
+		currFile++;
+	}
+
+	//to bottom left
+	currRank = rank + 1;
+	currFile = file - 1;
+	while (currRank < RANKS && currFile >= 0) {
+		const square = chessboard[currRank][currFile];
+		const squarePosition = [currRank, currFile];
+		const squareState = getSquareState(square, color);
+
+		if (squareState === squareStates.OCCUPIED_FRIENDLY) {
+			bishopDefending.push(squarePosition);
+			break;
+		}
+
+		currRank++;
+		currFile--;
+	}
+
+	//to top left
+	currRank = rank - 1;
+	currFile = file - 1;
+	while (currRank >= 0 && currFile >= 0) {
+		const square = chessboard[currRank][currFile];
+		const squarePosition = [currRank, currFile];
+		const squareState = getSquareState(square, color);
+
+		if (squareState === squareStates.OCCUPIED_FRIENDLY) {
+			bishopDefending.push(squarePosition);
+			break;
+		}
+
+		currRank--;
+		currFile--;
+	}
+
+	//to top right
+	currRank = rank - 1;
+	currFile = file + 1;
+	while (currRank >= 0 && currFile < FILES) {
+		const square = chessboard[currRank][currFile];
+		const squarePosition = [currRank, currFile];
+		const squareState = getSquareState(square, color);
+
+		if (squareState === squareStates.OCCUPIED_FRIENDLY) {
+			bishopDefending.push(squarePosition);
+			break;
+		}
+
+		currRank--;
+		currFile++;
+	}
+
+	return bishopDefending;
+};
+
+export const getKnightDefending = (chessboard: string[][], knightPosition: PiecePosition): PiecePosition[] => {
+	const knightDefending: PiecePosition[] = [];
+	const rank = knightPosition[RANK_INDEX];
+	const file = knightPosition[FILE_INDEX];
+	const color = getColor(chessboard[rank][file]);
+
+	const possibleDirections: PiecePosition[] = [
+		[rank - 2, file - 1],
+		[rank - 1, file - 2],
+		[rank + 1, file - 2],
+		[rank + 2, file - 1],
+		[rank + 2, file + 1],
+		[rank + 1, file + 2],
+		[rank - 1, file + 2],
+		[rank - 2, file + 1],
+	];
+
+	for (let i = 0; i < possibleDirections.length; i++) {
+		const squarePosition = possibleDirections[i];
+		const squareRank = squarePosition[RANK_INDEX];
+		const squareFile = squarePosition[FILE_INDEX];
+		if (squareRank < 0 || squareRank >= RANKS || squareFile < 0 || squareFile >= FILES) continue;
+
+		const square = chessboard[squareRank][squareFile];
+		const squareState = getSquareState(square, color);
+		if (squareState === squareStates.OCCUPIED_FRIENDLY) knightDefending.push([squareRank, squareFile]);
+	}
+
+	return knightDefending;
+};
+
+export const getRookDefending = (chessboard: string[][], rookPosition: PiecePosition): PiecePosition[] => {
+	const rookDefending: PiecePosition[] = [];
+	const rank = rookPosition[RANK_INDEX];
+	const file = rookPosition[FILE_INDEX];
+	const color = getColor(chessboard[rank][file]);
+
+	//horizontal moves left
+	for (let currFile = file - 1; currFile >= 0; currFile--) {
+		const square = chessboard[rank][currFile];
+		const squareState = getSquareState(square, color);
+
+		if (squareState === squareStates.OCCUPIED_FRIENDLY) {
+			rookDefending.push([rank, currFile]);
+			break;
+		}
+	}
+	//horizontal moves right
+	for (let currFile = file + 1; currFile < FILES; currFile++) {
+		const square = chessboard[rank][currFile];
+		const squareState = getSquareState(square, color);
+
+		if (squareState === squareStates.OCCUPIED_FRIENDLY) {
+			rookDefending.push([rank, currFile]);
+			break;
+		}
+	}
+	//vertical moves up
+	for (let currRank = rank - 1; currRank >= 0; currRank--) {
+		const square = chessboard[currRank][file];
+		const squareState = getSquareState(square, color);
+
+		if (squareState === squareStates.OCCUPIED_FRIENDLY) {
+			rookDefending.push([currRank, file]);
+			break;
+		}
+	}
+	//vertical moves down
+	for (let currRank = rank + 1; currRank < RANKS; currRank++) {
+		const square = chessboard[currRank][file];
+		const squareState = getSquareState(square, color);
+		if (squareState === squareStates.OCCUPIED_FRIENDLY) {
+			rookDefending.push([currRank, file]);
+			break;
+		}
+	}
+	return rookDefending;
+};
+export const getQueenDefending = (chessboard: string[][], queenPosition: PiecePosition): PiecePosition[] => {
+	const queenDefending: PiecePosition[] = [];
+	const diagonalMoves = getBishopDefending(chessboard, queenPosition);
+	const straightMoves = getRookDefending(chessboard, queenPosition);
+
+	queenDefending.push(...diagonalMoves);
+	queenDefending.push(...straightMoves);
+
+	return queenDefending;
+};
+export const getKingDefending = (chessboard: string[][], kingPosition: PiecePosition): PiecePosition[] => {
+	const kingDefending: PiecePosition[] = [];
+	const rank = kingPosition[RANK_INDEX];
+	const file = kingPosition[FILE_INDEX];
+	const color = getColor(chessboard[rank][file]);
+
+	const possibleDirections: PiecePosition[] = [
+		[rank + 1, file + 1],
+		[rank + 1, file - 1],
+		[rank + 1, file],
+		[rank - 1, file - 1],
+		[rank - 1, file],
+		[rank - 1, file + 1],
+		[rank, file - 1],
+		[rank, file + 1],
+	];
+
+	for (let i = 0; i < possibleDirections.length; i++) {
+		const squarePosition = possibleDirections[i];
+		const squareRank = squarePosition[RANK_INDEX];
+		const squareFile = squarePosition[FILE_INDEX];
+		if (squareRank < 0 || squareRank >= RANKS || squareFile < 0 || squareFile >= FILES) continue;
+
+		const square = chessboard[squareRank][squareFile];
+		const squareState = getSquareState(square, color);
+		if (squareState === squareStates.OCCUPIED_FRIENDLY) kingDefending.push([squareRank, squareFile]);
+	}
+
+	return kingDefending;
+};

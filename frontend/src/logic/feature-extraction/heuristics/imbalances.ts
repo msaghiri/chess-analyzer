@@ -13,13 +13,20 @@ import {
 	getColor,
 	getPawnAttacks,
 	piecePositionsToSquares,
+	getBishopDefending,
+	getKnightDefending,
+	getRookDefending,
+	getQueenDefending,
+	getKingDefending,
 } from "../featureExtractionUtils";
 import type {
 	AttackedSquares,
 	BishopPair,
+	DefendedSquares,
 	ImbalanceHeuristics,
 	MaterialCounter,
 	PieceAttackMap,
+	PieceDefenseMap,
 	PieceDetails,
 	PiecePosition,
 	PressureMap,
@@ -61,6 +68,42 @@ export const getAttackedSquares = (attacker: PiecePosition, chessboard: string[]
 	return attackedSquares;
 };
 
+export const getDefendedSquares = (defender: PiecePosition, chessboard: string[][]): DefendedSquares => {
+	let squares: PiecePosition[] = [];
+
+	const pieceType = chessboard[defender[RANK_INDEX]][defender[FILE_INDEX]].toLowerCase();
+
+	switch (pieceType) {
+		case "p":
+			squares = getPawnAttacks(chessboard, defender);
+			break;
+		case "b":
+			squares = getBishopDefending(chessboard, defender);
+			break;
+		case "n":
+			squares = getKnightDefending(chessboard, defender);
+			break;
+		case "r":
+			squares = getRookDefending(chessboard, defender);
+			break;
+		case "q":
+			squares = getQueenDefending(chessboard, defender);
+			break;
+		case "k":
+			squares = getKingDefending(chessboard, defender);
+			break;
+	}
+
+	const defendedSquares: DefendedSquares = {
+		pieceType,
+		defenderPosition: defender,
+		value: getMaterialValue(pieceType),
+		squares,
+	};
+
+	return defendedSquares;
+};
+
 export const getPieceAttackMap = (chessboard: string[][]): PieceAttackMap => {
 	const pieceAttackMap: PieceAttackMap = {
 		white: [],
@@ -82,6 +125,29 @@ export const getPieceAttackMap = (chessboard: string[][]): PieceAttackMap => {
 	}
 
 	return pieceAttackMap;
+};
+
+export const getPieceDefenseMap = (chessboard: string[][]): PieceDefenseMap => {
+	const PieceDefenseMap: PieceDefenseMap = {
+		white: [],
+		black: [],
+	};
+
+	for (let rank = 0; rank < RANKS; rank++) {
+		for (let file = 0; file < FILES; file++) {
+			const square = chessboard[rank][file];
+
+			if (square === EMPTY_SQUARE) continue;
+
+			const defender: PiecePosition = [rank, file];
+			const color = getColor(square) as "white" | "black";
+			const attackedSquares = getDefendedSquares(defender, chessboard);
+
+			PieceDefenseMap[color].push(attackedSquares);
+		}
+	}
+
+	return PieceDefenseMap;
 };
 
 export const getMaterialCount = (chessboard: string[][]): MaterialCounter => {
