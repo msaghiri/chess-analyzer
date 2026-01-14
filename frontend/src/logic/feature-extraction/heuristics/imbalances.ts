@@ -137,7 +137,7 @@ export const getPieceDefenseMap = (chessboard: string[][]): PieceDefenseMap => {
 		for (let file = 0; file < FILES; file++) {
 			const square = chessboard[rank][file];
 
-			if (square === EMPTY_SQUARE) continue;
+			if (square === EMPTY_SQUARE || square === "p" || square === "P") continue;
 
 			const defender: PiecePosition = [rank, file];
 			const color = getColor(square) as "white" | "black";
@@ -189,71 +189,49 @@ export const getMaterialCount = (chessboard: string[][]): MaterialCounter => {
 	return materialCounter;
 };
 
-export const getPressureMap = (pieceAttackMap: PieceAttackMap): PressureMap => {
+export const getPressureMap = (pieceAttackMap: PieceAttackMap, pieceDefenseMap: PieceDefenseMap): PressureMap => {
 	const pressureMap: PressureMap = Array.from({ length: RANKS }, () =>
 		Array.from({ length: FILES }, () => ({
-			white: {
-				material: 0,
-				pieces: [],
-			},
-			black: {
-				material: 0,
-				pieces: [],
-			},
+			white: { material: 0, pieces: [] },
+			black: { material: 0, pieces: [] },
 			whiteMin: -1,
 			blackMin: -1,
 		}))
 	);
 
-	const whitePiecesAttacking = pieceAttackMap.white;
-	const blackPiecesAttacking = pieceAttackMap.black;
+	const addInfluenceToMap = (influenceMap: PieceAttackMap | PieceDefenseMap) => {
+		const colors: ("white" | "black")[] = ["white", "black"];
 
-	whitePiecesAttacking.forEach((attackedSquares) => {
-		const squares = attackedSquares.squares;
-		const value = attackedSquares.value;
-		const type = attackedSquares.pieceType;
-		const attackerPosition = attackedSquares.attackerPosition;
+		colors.forEach((color) => {
+			influenceMap[color].forEach((entry: AttackedSquares | DefendedSquares) => {
+				const { squares, value, pieceType } = entry;
 
-		const attacker: PieceDetails = {
-			type,
-			position: attackerPosition,
-		};
+				const position = "attackerPosition" in entry ? entry.attackerPosition : entry.defenderPosition;
 
-		squares.forEach((square: PiecePosition) => {
-			const rank = square[RANK_INDEX];
-			const file = square[FILE_INDEX];
+				const influencer: PieceDetails = {
+					type: pieceType,
+					position: position,
+				};
 
-			pressureMap[rank][file].white.material += value;
+				squares.forEach((square: PiecePosition) => {
+					const rank = square[RANK_INDEX];
+					const file = square[FILE_INDEX];
+					const cell = pressureMap[rank][file][color];
 
-			pressureMap[rank][file].white.pieces.push(attacker);
+					cell.material += value;
+					cell.pieces.push(influencer);
 
-			if (pressureMap[rank][file].whiteMin === -1 || pressureMap[rank][file].whiteMin > value)
-				pressureMap[rank][file].whiteMin = value;
+					const minKey = color === "white" ? "whiteMin" : "blackMin";
+					if (pressureMap[rank][file][minKey] === -1 || pressureMap[rank][file][minKey] > value) {
+						pressureMap[rank][file][minKey] = value;
+					}
+				});
+			});
 		});
-	});
+	};
 
-	blackPiecesAttacking.forEach((attackedSquares) => {
-		const squares = attackedSquares.squares;
-		const value = attackedSquares.value;
-		const type = attackedSquares.pieceType;
-		const attackerPosition = attackedSquares.attackerPosition;
-
-		const attacker: PieceDetails = {
-			type,
-			position: attackerPosition,
-		};
-
-		squares.forEach((square: PiecePosition) => {
-			const rank = square[RANK_INDEX];
-			const file = square[FILE_INDEX];
-
-			pressureMap[rank][file].black.material += value;
-			pressureMap[rank][file].black.pieces.push(attacker);
-
-			if (pressureMap[rank][file].blackMin === -1 || pressureMap[rank][file].blackMin > value)
-				pressureMap[rank][file].blackMin = value;
-		});
-	});
+	addInfluenceToMap(pieceAttackMap);
+	addInfluenceToMap(pieceDefenseMap);
 
 	return pressureMap;
 };
@@ -272,8 +250,9 @@ export const getBishopPair = (materialCounter: MaterialCounter): BishopPair => {
 
 export const analyzePieces = (chessboard: string[][]): ImbalanceHeuristics => {
 	const attackMap = getPieceAttackMap(chessboard);
+	const defenseMap = getPieceDefenseMap(chessboard);
 	const materialCount = getMaterialCount(chessboard);
-	const pressureMap = getPressureMap(attackMap);
+	const pressureMap = getPressureMap(attackMap, defenseMap);
 	const bishopPair = getBishopPair(materialCount);
 
 	return { attackMap, materialCount, pressureMap, bishopPair };
