@@ -103,7 +103,6 @@ function evaluatePassedPawns(enrichedContext: EnrichedContext): RuleResult[] {
 					severity: severity,
 					color: color,
 					messages: [`The pawn on ${pawnSquare} is passed, however is immediately vulnerable to capture.`],
-					affectedSquares: [pawnPosition],
 					parsedAffectedSquares: [pawnSquare],
 				});
 				return;
@@ -115,7 +114,6 @@ function evaluatePassedPawns(enrichedContext: EnrichedContext): RuleResult[] {
 				severity,
 				color,
 				messages: messages.slice(0, 3),
-				affectedSquares: [pawnPosition],
 				parsedAffectedSquares: [pawnSquare],
 			};
 
@@ -182,7 +180,6 @@ function evaluateIsolatedPawns(enrichedContext: EnrichedContext): RuleResult[] {
 				severity,
 				color,
 				messages: messages.slice(0, 3),
-				affectedSquares: [],
 				parsedAffectedSquares: [pawn],
 			});
 		});
@@ -251,7 +248,6 @@ function evaluateBackwardsPawns(enrichedContext: EnrichedContext): RuleResult[] 
 				severity,
 				color,
 				messages: messages.slice(0, 3),
-				affectedSquares: [],
 				parsedAffectedSquares: [pawn],
 			};
 

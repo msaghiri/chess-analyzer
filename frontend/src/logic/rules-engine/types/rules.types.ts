@@ -1,4 +1,4 @@
-import type { PiecePosition, square } from "../../feature-extraction/featureExtraction.types";
+import type { square } from "../../feature-extraction/featureExtraction.types";
 import type { EnrichedContext } from "./context.types";
 
 export type RuleCategory = "pawn" | "imbalance"; //for now
@@ -18,7 +18,6 @@ export interface RuleResult {
 	severity: Severity;
 	color: "white" | "black" | "neutral";
 	messages: string[];
-	affectedSquares: PiecePosition[];
 	parsedAffectedSquares: square[];
 }
 

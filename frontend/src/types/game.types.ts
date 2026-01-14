@@ -1,4 +1,4 @@
-import type { RuleResult, RuleResults } from "../logic/rules-engine/types/rules.types";
+import type { RuleResults } from "../logic/rules-engine/types/rules.types";
 
 //actual positions
 export interface GamePosition {

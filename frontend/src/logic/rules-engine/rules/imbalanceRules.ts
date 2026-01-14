@@ -3,6 +3,7 @@ import { phases } from "../constants";
 import type { EnrichedContext } from "../types/context.types";
 import type { Rule, RuleResult } from "../types/rules.types";
 
+/* ------------------------------ BISHOP PAIRS ------------------------------ */
 export const BishopPairRule: Rule = {
 	id: "BISHOP_PAIR",
 	displayName: "Bishop Pair",
@@ -10,13 +11,21 @@ export const BishopPairRule: Rule = {
 	evaluate: evaluateBishopPair,
 };
 
-function findBishops(chessboard: string[][]): string[] {
-	const bishopSquares: string[] = [];
+function findBishops(chessboard: string[][]): { white: string[]; black: string[] } {
+	const WHITE_BISHOP = "B";
+	const BLACK_BISHOP = "b";
+
+	const bishopSquares = {
+		white: [] as string[],
+		black: [] as string[],
+	};
 
 	for (let rank = 0; rank < RANKS; rank++) {
 		for (let file = 0; file < FILES; file++) {
-			if (chessboard[rank][file].toLowerCase() === "b") {
-				bishopSquares.push(getSquare([rank, file]));
+			if (chessboard[rank][file] === WHITE_BISHOP) {
+				bishopSquares.white.push(getSquare([rank, file]));
+			} else if (chessboard[rank][file] === BLACK_BISHOP) {
+				bishopSquares.black.push(getSquare([rank, file]));
 			}
 		}
 	}
@@ -24,7 +33,6 @@ function findBishops(chessboard: string[][]): string[] {
 	return bishopSquares;
 }
 
-//TODO: RETURN SQUARES FOR THE BISHOPS OF THE SIDE WITH THE BISHOP PAIR
 function evaluateBishopPair(enrichedContext: EnrichedContext): RuleResult[] {
 	const bishopPairRuleResult: RuleResult = {
 		ruleId: BishopPairRule.id,
@@ -32,17 +40,21 @@ function evaluateBishopPair(enrichedContext: EnrichedContext): RuleResult[] {
 		messages: [],
 		color: "neutral",
 		severity: "neutral",
-		affectedSquares: [],
 		parsedAffectedSquares: [],
 	};
 
 	const bishopPairWhite = enrichedContext.heuristics.imbalanceHeuristics.bishopPair.white;
 	const bishopPairBlack = enrichedContext.heuristics.imbalanceHeuristics.bishopPair.black;
 
+	const chessboard = enrichedContext.parsedHeuristics.chessboard;
+	const allBishopPositions = findBishops(chessboard);
+
 	if (bishopPairWhite && bishopPairBlack) {
 		bishopPairRuleResult.color = "neutral";
 		bishopPairRuleResult.severity = "neutral";
 		bishopPairRuleResult.messages.push("Both sides have the bishop pair.");
+		bishopPairRuleResult.parsedAffectedSquares.push(...allBishopPositions.white);
+		bishopPairRuleResult.parsedAffectedSquares.push(...allBishopPositions.black);
 	} else if (!bishopPairWhite && !bishopPairBlack) {
 		bishopPairRuleResult.color = "neutral";
 		bishopPairRuleResult.severity = "neutral";
@@ -50,6 +62,7 @@ function evaluateBishopPair(enrichedContext: EnrichedContext): RuleResult[] {
 	} else if (bishopPairWhite && !bishopPairBlack) {
 		bishopPairRuleResult.color = "white";
 		bishopPairRuleResult.severity = "positive";
+		bishopPairRuleResult.parsedAffectedSquares.push(...allBishopPositions.white);
 
 		if (enrichedContext.gamePhase === phases.ENDGAME) {
 			bishopPairRuleResult.messages.push("White's bishop pair is a valuable asset in the endgame.");
@@ -59,6 +72,7 @@ function evaluateBishopPair(enrichedContext: EnrichedContext): RuleResult[] {
 	} else {
 		bishopPairRuleResult.color = "black";
 		bishopPairRuleResult.severity = "positive";
+		bishopPairRuleResult.parsedAffectedSquares.push(...allBishopPositions.black);
 
 		if (enrichedContext.gamePhase === phases.ENDGAME) {
 			bishopPairRuleResult.messages.push("Black's bishop pair is a valuable asset in the endgame.");
@@ -67,14 +81,10 @@ function evaluateBishopPair(enrichedContext: EnrichedContext): RuleResult[] {
 		}
 	}
 
-	const chessboard = enrichedContext.parsedHeuristics.chessboard;
-	const bishopPositions: string[] = findBishops(chessboard);
-
-	bishopPairRuleResult.parsedAffectedSquares = bishopPositions;
-
 	return [bishopPairRuleResult];
 }
 
+/* --------------------------- MATERIAL IMBALANCES -------------------------- */
 export const MaterialImbalanceRule: Rule = {
 	id: "MATERIAL_IMBALANCES",
 	displayName: "Material Imbalances",
@@ -82,7 +92,6 @@ export const MaterialImbalanceRule: Rule = {
 	evaluate: evaluateMaterialImbalances,
 };
 
-//this one should be returning about two messages
 function evaluateMaterialImbalances(enrichedContext: EnrichedContext): RuleResult[] {
 	const { materialCount } = enrichedContext.heuristics.imbalanceHeuristics;
 
@@ -103,7 +112,6 @@ function evaluateMaterialImbalances(enrichedContext: EnrichedContext): RuleResul
 		messages: [],
 		color: "neutral",
 		severity: "minor",
-		affectedSquares: [],
 		parsedAffectedSquares: [],
 	};
 

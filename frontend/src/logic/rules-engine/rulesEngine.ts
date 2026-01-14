@@ -69,7 +69,7 @@ export class RulesEngine {
 	public runAnalysis(): RuleResults {
 		const currentEnrichedContext = this.buildEnrichedContext();
 
-		const pawnRuleResults: RuleResult[] = []; //for now, i will type later
+		const pawnRuleResults: RuleResult[] = [];
 		pawnRules.forEach((rule) => pawnRuleResults.push(...rule.evaluate(currentEnrichedContext)));
 
 		const imbalanceRuleResults: RuleResult[] = [];
