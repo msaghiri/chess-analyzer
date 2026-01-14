@@ -143,10 +143,13 @@
 	background-color: rgba(168, 116, 18, 0.212);
 }
 [data-category="minor"] {
-	background-color: rgba(124, 124, 29, 0.185);
+	background-color: rgba(131, 37, 8, 0.479);
 }
 [data-category="positive"] {
 	background-color: rgba(24, 95, 24, 0.281);
+}
+[data-category="neutral"] {
+	background-color: rgba(145, 86, 19, 0.555);
 }
 
 .ruleContainerBody {

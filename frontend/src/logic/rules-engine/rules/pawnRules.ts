@@ -1,8 +1,9 @@
+import type { SquarePressure } from "../../feature-extraction/featureExtraction.types";
 import { getSquare } from "../../feature-extraction/featureExtractionUtils";
-import { phases, vulnerabilityMetrics } from "../constants";
-import { isPieceVulnerable } from "../rulesEngineUtils";
+import { centralTypes, phases, vulnerabilityMetrics, type CentralType } from "../constants";
+import { getPieceCentrality, isPieceVulnerable } from "../rulesEngineUtils";
 import type { EnrichedContext } from "../types/context.types";
-import type { Rule, RuleResult } from "../types/rules.types";
+import type { Rule, RuleResult, Severity } from "../types/rules.types";
 
 export const PassedPawnRule: Rule = {
 	id: "PASSED_PAWN",
@@ -113,7 +114,7 @@ function evaluatePassedPawns(enrichedContext: EnrichedContext): RuleResult[] {
 				ruleName: "Passed Pawn",
 				severity,
 				color,
-				messages,
+				messages: messages.slice(0, 3),
 				affectedSquares: [pawnPosition],
 				parsedAffectedSquares: [pawnSquare],
 			};
@@ -128,4 +129,74 @@ function evaluatePassedPawns(enrichedContext: EnrichedContext): RuleResult[] {
 	return results;
 }
 
-export const pawnRules: Rule[] = [PassedPawnRule];
+export const IsolatedPawnRule: Rule = {
+	id: "ISOLATED_PAWN",
+	displayName: "Isolated Pawn",
+	category: "pawn",
+	evaluate: evaluateIsolatedPawns,
+};
+
+function evaluateIsolatedPawns(enrichedContext: EnrichedContext): RuleResult[] {
+	const isolatedPawnRuleResults: RuleResult[] = [];
+
+	const parsedPawnHeuristics = enrichedContext.parsedHeuristics.pawnHeuristics;
+	const parsedSquarePressure = enrichedContext.parsedHeuristics.imbalanceHeuristics.pressureMap;
+	const phase = enrichedContext.gamePhase;
+
+	const processColor = (color: "white" | "black") => {
+		const opposingColor = color === "white" ? "black" : "white";
+
+		const parsedIsolatedPawns = parsedPawnHeuristics.isolatedPawns[color];
+
+		const colorRulesResult: RuleResult[] = [];
+
+		parsedIsolatedPawns.forEach((pawn) => {
+			let severity: Severity = "minor";
+			const messages = [];
+
+			const pawnCentrality: CentralType = getPieceCentrality(pawn);
+			const pawnSquarePressure: SquarePressure = parsedSquarePressure[pawn];
+
+			const isPawnVulnerable = isPieceVulnerable(color, pawnSquarePressure, 1);
+
+			if (pawnCentrality !== centralTypes.NOT_CENTRAL) {
+				severity = "significant";
+				messages.push(`${color}'s isolated pawn on ${pawn} is central, making it a clear target for ${opposingColor}.`);
+			}
+			if (phase === phases.ENDGAME) {
+				severity = "significant";
+				messages.push(`During the endgame, ${color}'s isolated pawn on ${pawn} becomes a clearer weakness.`);
+			}
+			if (isPawnVulnerable === vulnerabilityMetrics.HANGING) {
+				severity = "significant";
+				messages.push(`${color}'s isolated pawn on ${pawn} is especially vulnerable as it is hanging.`);
+			}
+
+			if (messages.length === 0) {
+				messages.push(`${color} has an isolated pawn on ${pawn}`);
+			}
+
+			colorRulesResult.push({
+				ruleId: IsolatedPawnRule.id,
+				ruleName: IsolatedPawnRule.displayName,
+				severity,
+				color,
+				messages: messages.slice(0, 3),
+				affectedSquares: [],
+				parsedAffectedSquares: [pawn],
+			});
+		});
+
+		return colorRulesResult;
+	};
+
+	const whiteIsolatedPawnRuleResults = processColor("white");
+	const blackIsolatedPawnRuleResults = processColor("black");
+
+	isolatedPawnRuleResults.push(...whiteIsolatedPawnRuleResults);
+	isolatedPawnRuleResults.push(...blackIsolatedPawnRuleResults);
+
+	return isolatedPawnRuleResults;
+}
+
+export const pawnRules: Rule[] = [PassedPawnRule, IsolatedPawnRule];

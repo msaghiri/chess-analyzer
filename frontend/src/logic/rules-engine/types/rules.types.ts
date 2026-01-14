@@ -10,12 +10,19 @@ export interface Rule {
 	evaluate: (enrichedContext: EnrichedContext) => RuleResult[];
 }
 
+export type Severity = "critical" | "significant" | "minor" | "positive" | "neutral";
+
 export interface RuleResult {
 	ruleId: string;
 	ruleName: string;
-	severity: "critical" | "significant" | "minor" | "positive";
-	color: "white" | "black";
+	severity: Severity;
+	color: "white" | "black" | "neutral";
 	messages: string[];
 	affectedSquares: PiecePosition[];
 	parsedAffectedSquares: square[];
+}
+
+export interface RuleResults {
+	pawn: RuleResult[];
+	imbalance: RuleResult[];
 }

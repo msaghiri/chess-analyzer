@@ -1,6 +1,14 @@
-import type { SquarePressure } from "../feature-extraction/featureExtraction.types";
+import type { square, SquarePressure } from "../feature-extraction/featureExtraction.types";
 import { getMaterialValue } from "../feature-extraction/featureExtractionUtils";
-import { vulnerabilityMetrics, type vulnerabilityMetric } from "./constants";
+import {
+	BIG_CENTER_SQUARES,
+	CENTRAL_FILES,
+	centralTypes,
+	SMALL_CENTER_SQUARES,
+	vulnerabilityMetrics,
+	type CentralType,
+	type vulnerabilityMetric,
+} from "./constants";
 
 export const isPieceVulnerable = (
 	color: "white" | "black",
@@ -22,7 +30,7 @@ export const isPieceVulnerable = (
 	return vulnerabilityMetrics.SAFE;
 };
 
-const calculateExchangeBalance = (
+export const calculateExchangeBalance = (
 	color: "white" | "black",
 	squarePressure: SquarePressure,
 	pieceValue: number
@@ -55,4 +63,14 @@ const calculateExchangeBalance = (
 	}
 
 	return balance;
+};
+
+export const getPieceCentrality = (piecePosition: square): CentralType => {
+	const file = piecePosition.charAt(0);
+
+	if (piecePosition in SMALL_CENTER_SQUARES) return centralTypes.SMALL_CENTER;
+	if (piecePosition in BIG_CENTER_SQUARES) return centralTypes.BIG_CENTER;
+	if (file in CENTRAL_FILES) return centralTypes.CENTRAL_FILE;
+
+	return centralTypes.NOT_CENTRAL;
 };

@@ -141,9 +141,11 @@ export interface ParsedImbalanceHeuristics {
 export interface OverallHeuristics {
 	pawnHeuristics: PawnHeuristics;
 	imbalanceHeuristics: ImbalanceHeuristics;
+	chessboard: [][];
 }
 
 export interface ParsedOverallHeuristics {
 	pawnHeuristics: ParsedPawnHeuristics;
 	imbalanceHeuristics: ParsedImbalanceHeuristics;
+	chessboard: [][];
 }

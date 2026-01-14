@@ -16,6 +16,7 @@ function App() {
 		<BrowserRouter>
 			<Routes>
 				<Route path="" element={<AnalysisRoutes />}>
+					<Route index element={<InputPGNPage />} />
 					<Route path="/analysis" element={<AnalysisPage />} />
 					<Route path="/input" element={<InputPGNPage />} />
 				</Route>

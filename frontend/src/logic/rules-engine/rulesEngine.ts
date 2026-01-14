@@ -4,7 +4,8 @@ import type { EnrichedContext } from "./types/context.types";
 import { getGamePhase } from "./enrichedContextBuilder";
 import type { GamePhase } from "./constants";
 import { pawnRules } from "./rules/pawnRules";
-import type { RuleResult } from "./types/rules.types";
+import type { RuleResult, RuleResults } from "./types/rules.types";
+import { imbalanceRules } from "./rules/imbalanceRules";
 
 export class RulesEngine {
 	private previousFen: string | undefined;
@@ -61,11 +62,18 @@ export class RulesEngine {
 		};
 	}
 
-	public runAnalysis(): RuleResult[] {
+	public runAnalysis(): RuleResults {
 		const currentEnrichedContext = this.buildEnrichedContext();
+
 		const pawnRuleResults: RuleResult[] = []; //for now, i will type later
 		pawnRules.forEach((rule) => pawnRuleResults.push(...rule.evaluate(currentEnrichedContext)));
 
-		return pawnRuleResults;
+		const imbalanceRuleResults: RuleResult[] = [];
+		imbalanceRules.forEach((rule) => imbalanceRuleResults.push(...rule.evaluate(currentEnrichedContext)));
+
+		return {
+			pawn: pawnRuleResults,
+			imbalance: imbalanceRuleResults,
+		};
 	}
 }

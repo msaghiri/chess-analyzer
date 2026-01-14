@@ -1,8 +1,8 @@
 import type { BoardNav, EvaluationObject } from "../../types/game.types";
 import { Repeat2, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import styles from "./AnalysisDetails.module.css";
-import { getMode } from "./../../modes/modes";
-import type { RuleResult } from "../../logic/rules-engine/types/rules.types";
+import { getMode, modes } from "./../../modes/modes";
+import type { RuleResult, RuleResults } from "../../logic/rules-engine/types/rules.types";
 import { useState } from "react";
 
 /* -------------------------------- STOCKFISH ------------------------------- */
@@ -129,7 +129,7 @@ const SingleRule = ({
 	);
 };
 
-const HeuristicsSection = ({ ruleResults }: { ruleResults: RuleResult[] }) => {
+const DisplayRules = ({ ruleResults }: { ruleResults: RuleResult[] }) => {
 	const [expanded, setExpanded] = useState(-1);
 
 	const handleSetExpanded = (i: number) => {
@@ -151,6 +151,18 @@ const HeuristicsSection = ({ ruleResults }: { ruleResults: RuleResult[] }) => {
 	);
 };
 
+const HeuristicsSection = ({ ruleResults, currentMode }: { ruleResults: RuleResults; currentMode: string }) => {
+	const pawnRuleResults = ruleResults.pawn;
+	const imbalanceRuleResults = ruleResults.imbalance;
+
+	return (
+		<>
+			{currentMode === getMode(modes.PAWNS) && <DisplayRules ruleResults={pawnRuleResults} />}
+			{currentMode === getMode(modes.IMBALANCES) && <DisplayRules ruleResults={imbalanceRuleResults} />}
+		</>
+	);
+};
+
 /* ----------------------------- MAIN COMPONENT ----------------------------- */
 const AnalysisDetails = ({ boardInfo }: { boardInfo: BoardNav }) => {
 	const idx = boardInfo.currentPosition.index;
@@ -168,7 +180,7 @@ const AnalysisDetails = ({ boardInfo }: { boardInfo: BoardNav }) => {
 		<div className={styles.sidebar}>
 			<StockfishSection score={displayScore} evaluations={currentEvalData} />
 			<ModeNavigation currentMode={currentMode} nextMode={boardInfo.nextMode} prevMode={boardInfo.prevMode} />
-			<HeuristicsSection ruleResults={currentRuleResults} />
+			<HeuristicsSection ruleResults={currentRuleResults} currentMode={currentMode} />
 
 			<NavigationControls onPrev={boardInfo.prevMove} onNext={boardInfo.nextMove} flipBoard={boardInfo.flipBoard} />
 		</div>

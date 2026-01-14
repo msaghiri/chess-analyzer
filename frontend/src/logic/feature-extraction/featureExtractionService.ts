@@ -1,6 +1,7 @@
 import type {
 	OverallHeuristics,
 	ParsedImbalanceHeuristics,
+	ParsedOverallHeuristics,
 	ParsedPawnChains,
 	ParsedPawnHeuristics,
 	ParsedPieceMap,
@@ -20,10 +21,10 @@ export const runAnalysis = (fen: string): OverallHeuristics => {
 	const imbalanceHeuristics = analyzePieces(chessboard);
 	const pawnHeuristics = analyzePawns(chessboard, imbalanceHeuristics.pressureMap);
 
-	return { imbalanceHeuristics, pawnHeuristics };
+	return { imbalanceHeuristics, pawnHeuristics, chessboard };
 };
 
-export const parseHeuristics = (overallHeuristics: OverallHeuristics) => {
+export const parseHeuristics = (overallHeuristics: OverallHeuristics): ParsedOverallHeuristics => {
 	const pawnHeuristics = overallHeuristics.pawnHeuristics;
 	const imbalanceHeuristics = overallHeuristics.imbalanceHeuristics;
 
@@ -52,5 +53,6 @@ export const parseHeuristics = (overallHeuristics: OverallHeuristics) => {
 	return {
 		pawnHeuristics: parsedPawnHeuristics,
 		imbalanceHeuristics: parsedImbalanceHeuristics,
+		chessboard: overallHeuristics.chessboard,
 	};
 };

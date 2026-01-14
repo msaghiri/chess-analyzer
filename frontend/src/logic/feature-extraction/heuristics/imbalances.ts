@@ -88,15 +88,26 @@ export const getMaterialCount = (chessboard: string[][]): MaterialCounter => {
 	const materialCounter: MaterialCounter = {
 		white: {
 			materialCount: 0,
+			p: 0,
+			b: 0,
+			n: 0,
+			r: 0,
+			q: 0,
 		},
 		black: {
 			materialCount: 0,
+			p: 0,
+			b: 0,
+			n: 0,
+			r: 0,
+			q: 0,
 		},
 	};
 
 	for (let rank = 0; rank < RANKS; rank++) {
 		for (let file = 0; file < FILES; file++) {
 			if (chessboard[rank][file] === EMPTY_SQUARE) continue;
+			if (chessboard[rank][file].toLowerCase() === "k") continue;
 
 			const square = chessboard[rank][file];
 			const pieceColor = getColor(square) as "white" | "black";
