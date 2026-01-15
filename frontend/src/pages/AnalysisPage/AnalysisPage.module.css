@@ -29,6 +29,8 @@
 	border: var(--main-border-style);
 
 	border-radius: 20px;
+
+	min-width: 700px;
 }
 
 .boardWrapper {
@@ -42,5 +44,27 @@
 	}
 	.mainContainer {
 		min-height: 600px;
+	}
+}
+
+@media (max-width: 950px) {
+	.analysisPage {
+		height: fit-content;
+	}
+	.mainContainer {
+		display: flex;
+		flex-direction: column;
+		overflow: scroll;
+	}
+	.boardWrapper {
+		width: 100%;
+	}
+	.leftSection {
+		min-width: 0;
+		min-width: 325px;
+		height: 450px;
+	}
+	.rightSection {
+		flex: 0.95;
 	}
 }

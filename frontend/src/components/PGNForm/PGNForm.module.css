@@ -58,3 +58,9 @@
 	transition: width;
 	transition-duration: 200ms;
 }
+
+@media (max-width: 750px) {
+	.pgnFormContainer {
+		width: 100%;
+	}
+}

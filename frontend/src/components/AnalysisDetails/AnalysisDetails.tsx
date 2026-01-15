@@ -30,10 +30,19 @@ const StockfishLines = ({ evaluations }: { evaluations: EvaluationObject[] }) =>
 	</div>
 );
 
+const StockfishLinesMobile = ({ evaluations }: { evaluations: EvaluationObject[] }) => {
+	const item = evaluations[0].line;
+	return (
+		<div className={styles.mobileStockfishLines}>
+			<StockfishLine key={0} index={0} line={item} isFirstLine={true} />
+		</div>
+	);
+};
 const StockfishSection = ({ score, evaluations }: { score: string; evaluations: EvaluationObject[] }) => (
 	<section className={styles.stockfishSection}>
 		<h1 className={styles.stockfishEvaluation}>{score}</h1>
 		<StockfishLines evaluations={evaluations} />
+		<StockfishLinesMobile evaluations={evaluations} />
 	</section>
 );
 
