@@ -13,6 +13,9 @@ const AnalysisPage = () => {
 
 	return (
 		<div className={styles.analysisPage}>
+			<h1 className={styles.landscapeDisclaimer}>
+				There is not enough height to adequately present the app. Please rotate your device!
+			</h1>
 			<div className={styles.mainContainer}>
 				<div className={styles.leftSection}>
 					<div className={styles.boardWrapper}>
