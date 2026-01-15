@@ -11,7 +11,11 @@ class StockfishService {
 	init(): void {
 		if (this.engine) return;
 
-		this.engine = new Worker("/stockfish-17.1-lite-single-03e3232.js");
+		const workerPath = `${import.meta.env.BASE_URL}stockfish-17.1-lite-single-03e3232.js`;
+
+		console.log(`Initializing Stockfish from ${workerPath}`);
+
+		this.engine = new Worker(workerPath);
 
 		this.engine.onmessage = (event: MessageEvent) => {
 			if (this.onMessageHandler) {
@@ -78,23 +82,6 @@ class StockfishService {
 		return responses;
 	}
 
-	//example: info depth 10 seldepth 16 multipv 2 score cp -578 nodes 3235 nps 323500 hashfull 5 time 10 pv h2h3 d1g1 h1g1 c2c1 g1h2 c1g5 g3g5 h6g5 h2g3 f8d8 a2a3 g8f8 e5e6 f8e7
-	/*	parseEvaluation(stockfishResponse: string): EvaluationObject {
-		const arr = stockfishResponse.split(" ");
-		const depth = parseInt(arr[2]);
-
-		const isMate = arr[8] === "mate";
-		const evaluation = isMate ? Infinity : parseFloat(arr[9]) / 100.0;
-
-		const line = [arr[19], arr[20], arr[21]].filter((move) => move !== undefined);
-
-		return {
-			depth,
-			line,
-			evaluation,
-		};
-	}
-*/
 	parseEvaluation(stockfishResponse: string): EvaluationObject {
 		const arr = stockfishResponse.split(" ");
 
