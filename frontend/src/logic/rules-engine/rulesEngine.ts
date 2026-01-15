@@ -9,9 +9,12 @@ import { imbalanceRules } from "./rules/imbalanceRules";
 import { toPlay } from "./rulesEngineUtils";
 
 export class RulesEngine {
+	//@ts-expect-error i might need this later
 	private previousFen: string | undefined;
 	private fen: string | undefined;
+	//@ts-expect-error i might need this later
 	private previousHeuristics: OverallHeuristics | undefined;
+	//@ts-expect-error i might need this later
 	private previousParsedHeuristics: ParsedOverallHeuristics | undefined;
 	private heuristics: OverallHeuristics | undefined;
 	private parsedHeuristics: ParsedOverallHeuristics | undefined; //for when its more convenient to deal with square rather than PiecePosition

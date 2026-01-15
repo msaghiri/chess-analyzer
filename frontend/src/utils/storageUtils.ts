@@ -15,7 +15,10 @@ const loadGamePositions = (): GamePosition[] => {
 			{
 				fen: DEFAULT_POSITION,
 				evaluation: [],
-				ruleResults: [],
+				ruleResults: {
+					pawn: [],
+					imbalance: [],
+				},
 			},
 		];
 	}
