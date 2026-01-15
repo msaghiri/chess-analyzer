@@ -10,7 +10,14 @@ export interface Rule {
 	evaluate: (enrichedContext: EnrichedContext) => RuleResult[];
 }
 
-export type Severity = "critical" | "significant" | "minor" | "positive" | "neutral";
+export type Severity =
+	| "significant weakness"
+	| "minor weakness"
+	| "neutral"
+	| "minor advantage"
+	| "significant advantage";
+
+//categories -> significant weakness, minor weakness, neutral, minor advantage, significant advantage
 
 export interface RuleResult {
 	ruleId: string;

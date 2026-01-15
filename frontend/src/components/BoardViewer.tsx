@@ -22,20 +22,20 @@ const constantChessboardOptions = {
 };
 
 const squareStyleMap: Record<Severity, React.CSSProperties> = {
-	critical: {
-		backgroundColor: "rgba(153, 0, 0, 0.47)",
+	"significant weakness": {
+		backgroundColor: "#c74224",
 	},
-	significant: {
-		backgroundColor: "rgba(255, 0, 0, 0.38)",
-	},
-	minor: {
-		backgroundColor: "rgba(255, 0, 0, 0.2)",
+	"minor weakness": {
+		backgroundColor: "#c77024",
 	},
 	neutral: {
-		backgroundColor: "rgba(200, 160, 46, 0.73)",
+		backgroundColor: "#c29d23",
 	},
-	positive: {
-		backgroundColor: "#4b5937",
+	"minor advantage": {
+		backgroundColor: "#53a82c",
+	},
+	"significant advantage": {
+		backgroundColor: "#0f9432",
 	},
 };
 

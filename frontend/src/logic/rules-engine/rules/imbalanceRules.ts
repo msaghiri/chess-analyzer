@@ -61,20 +61,23 @@ function evaluateBishopPair(enrichedContext: EnrichedContext): RuleResult[] {
 		bishopPairRuleResult.messages.push("Neither side has the bishop pair.");
 	} else if (bishopPairWhite && !bishopPairBlack) {
 		bishopPairRuleResult.color = "white";
-		bishopPairRuleResult.severity = "positive";
+
+		bishopPairRuleResult.severity = "minor advantage";
 		bishopPairRuleResult.parsedAffectedSquares.push(...allBishopPositions.white);
 
 		if (enrichedContext.gamePhase === phases.ENDGAME) {
+			bishopPairRuleResult.severity = "significant advantage";
 			bishopPairRuleResult.messages.push("White's bishop pair is a valuable asset in the endgame.");
 		} else {
 			bishopPairRuleResult.messages.push("White has the bishop pair.");
 		}
 	} else {
 		bishopPairRuleResult.color = "black";
-		bishopPairRuleResult.severity = "positive";
+		bishopPairRuleResult.severity = "minor advantage";
 		bishopPairRuleResult.parsedAffectedSquares.push(...allBishopPositions.black);
 
 		if (enrichedContext.gamePhase === phases.ENDGAME) {
+			bishopPairRuleResult.severity = "significant advantage";
 			bishopPairRuleResult.messages.push("Black's bishop pair is a valuable asset in the endgame.");
 		} else {
 			bishopPairRuleResult.messages.push("Black has the bishop pair.");
@@ -111,7 +114,7 @@ function evaluateMaterialImbalances(enrichedContext: EnrichedContext): RuleResul
 		ruleName: MaterialImbalanceRule.displayName,
 		messages: [],
 		color: "neutral",
-		severity: "minor",
+		severity: "neutral",
 		parsedAffectedSquares: [],
 	};
 

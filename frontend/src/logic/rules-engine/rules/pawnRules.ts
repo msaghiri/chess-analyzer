@@ -83,19 +83,21 @@ function evaluatePassedPawns(enrichedContext: EnrichedContext): RuleResult[] {
 			}
 
 			/* -------------------------------- SEVERITY -------------------------------- */
-			let severity = "positive" as "critical" | "significant" | "minor" | "positive";
+			let severity: Severity = "neutral";
 
-			if (importance >= 0.6) {
-				severity = "positive";
+			if (importance >= 0.7) {
+				severity = "significant advantage";
+			} else if (importance >= 0.6) {
+				severity = "minor advantage";
 			} else {
-				severity = "minor";
+				severity = "neutral";
 			}
 
 			/* --------------------------- GOING TO BE TAKEN? --------------------------- */
 			const isPawnVulnerable = isPieceVulnerable(color, squarePressure, 1);
 			if (isPawnVulnerable != vulnerabilityMetrics.SAFE) {
 				messages.push();
-				severity = "minor";
+				severity = "neutral";
 
 				results.push({
 					ruleId: "PASSED_PAWN",
@@ -149,7 +151,7 @@ function evaluateIsolatedPawns(enrichedContext: EnrichedContext): RuleResult[] {
 		const colorRulesResult: RuleResult[] = [];
 
 		parsedIsolatedPawns.forEach((pawn) => {
-			let severity: Severity = "minor";
+			let severity: Severity = "minor weakness";
 			const messages = [];
 
 			const pawnCentrality: CentralType = getPieceCentrality(pawn);
@@ -158,15 +160,15 @@ function evaluateIsolatedPawns(enrichedContext: EnrichedContext): RuleResult[] {
 			const isPawnVulnerable = isPieceVulnerable(color, pawnSquarePressure, 1);
 
 			if (pawnCentrality !== centralTypes.NOT_CENTRAL) {
-				severity = "significant";
+				severity = "significant weakness";
 				messages.push(`${color}'s isolated pawn on ${pawn} is central, making it a clear target for ${opposingColor}.`);
 			}
 			if (phase === phases.ENDGAME) {
-				severity = "significant";
+				severity = "significant weakness";
 				messages.push(`During the endgame, ${color}'s isolated pawn on ${pawn} becomes a clearer weakness.`);
 			}
 			if (isPawnVulnerable === vulnerabilityMetrics.HANGING) {
-				severity = "significant";
+				severity = "significant weakness";
 				messages.push(`${color}'s isolated pawn on ${pawn} is especially vulnerable as it is hanging.`);
 			}
 
@@ -217,7 +219,7 @@ function evaluateBackwardsPawns(enrichedContext: EnrichedContext): RuleResult[] 
 		const currentBackwardsPawns = color === "white" ? whiteBackwardsPawns : blackBackwardsPawns;
 
 		currentBackwardsPawns.forEach((pawn) => {
-			let severity: Severity = "minor";
+			let severity: Severity = "minor weakness";
 			const messages: string[] = [];
 
 			const pawnSquarePressure: SquarePressure = pressureMap[pawn];
@@ -225,12 +227,12 @@ function evaluateBackwardsPawns(enrichedContext: EnrichedContext): RuleResult[] 
 
 			const vulnerability = isPieceVulnerable(color, pawnSquarePressure, 1);
 			if (vulnerability === vulnerabilityMetrics.HANGING) {
-				severity = "significant";
+				severity = "significant weakness";
 				messages.push(`${capitalize(color)}'s backwards pawn on ${pawn} is under attack.`);
 			}
 
 			if (gamePhase === phases.ENDGAME) {
-				severity = "significant";
+				severity = "significant weakness";
 				messages.push(`The endgame makes the backwards pawn on ${pawn} a clear target.`);
 			}
 
