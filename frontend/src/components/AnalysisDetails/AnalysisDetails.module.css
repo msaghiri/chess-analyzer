@@ -88,6 +88,7 @@
 
 .heuristicsContainer {
 	flex: 1;
+	min-height: 0;
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
@@ -99,7 +100,20 @@
 	gap: 20px;
 }
 
+.heuristicsContainer::-webkit-scrollbar {
+	background-color: rgba(0, 0, 0, 0.425);
+	width: 8px;
+}
+.heuristicsContainer::-webkit-scrollbar-thumb {
+	background: linear-gradient(rgba(15, 58, 87, 0.671), rgba(12, 87, 100, 0.993));
+	border-radius: 20px;
+}
+.heuristicsContainer::-webkit-scrollbar-track {
+	background-color: rgba(255, 255, 255, 0);
+}
+
 .ruleContainer {
+	flex-shrink: 0;
 	width: 100%;
 	background-color: rgba(60, 92, 161, 0.233);
 	max-height: 40px;
@@ -111,7 +125,7 @@
 	transition: max-height 500ms;
 }
 .ruleContainerExpanded {
-	max-height: 150px;
+	max-height: 170px;
 }
 
 .ruleContainerHeader {

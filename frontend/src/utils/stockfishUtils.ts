@@ -79,7 +79,7 @@ class StockfishService {
 	}
 
 	//example: info depth 10 seldepth 16 multipv 2 score cp -578 nodes 3235 nps 323500 hashfull 5 time 10 pv h2h3 d1g1 h1g1 c2c1 g1h2 c1g5 g3g5 h6g5 h2g3 f8d8 a2a3 g8f8 e5e6 f8e7
-	parseEvaluation(stockfishResponse: string): EvaluationObject {
+	/*	parseEvaluation(stockfishResponse: string): EvaluationObject {
 		const arr = stockfishResponse.split(" ");
 		const depth = parseInt(arr[2]);
 
@@ -92,6 +92,37 @@ class StockfishService {
 			depth,
 			line,
 			evaluation,
+		};
+	}
+*/
+	parseEvaluation(stockfishResponse: string): EvaluationObject {
+		const arr = stockfishResponse.split(" ");
+
+		const depthIndex = arr.indexOf("depth");
+		const depth = depthIndex !== -1 ? parseInt(arr[depthIndex + 1]) : 0;
+
+		const scoreIndex = arr.indexOf("score");
+		const scoreType = arr[scoreIndex + 1];
+		const scoreValue = parseInt(arr[scoreIndex + 2]);
+
+		let evaluation = 0;
+		let mateIn: number | null = null;
+
+		if (scoreType === "mate") {
+			mateIn = scoreValue;
+			evaluation = scoreValue > 0 ? 1000 : -1000;
+		} else {
+			evaluation = scoreValue / 100.0;
+		}
+
+		const pvIndex = arr.indexOf("pv");
+		const line = pvIndex !== -1 ? arr.slice(pvIndex + 1, pvIndex + 4) : [];
+
+		return {
+			depth,
+			line,
+			evaluation,
+			mateIn,
 		};
 	}
 

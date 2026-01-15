@@ -30,12 +30,30 @@ const StockfishLines = ({ evaluations }: { evaluations: EvaluationObject[] }) =>
 	</div>
 );
 
-const StockfishSection = ({ score, evaluations }: { score: number; evaluations: EvaluationObject[] }) => (
+const StockfishSection = ({ score, evaluations }: { score: string; evaluations: EvaluationObject[] }) => (
 	<section className={styles.stockfishSection}>
 		<h1 className={styles.stockfishEvaluation}>{score}</h1>
 		<StockfishLines evaluations={evaluations} />
 	</section>
 );
+
+const formatEval = (rawEvaluationObject: EvaluationObject, activeColor: string): string => {
+	if (!rawEvaluationObject || !activeColor) return "0.0";
+
+	if (rawEvaluationObject.mateIn !== null) {
+		if (rawEvaluationObject.mateIn === 0) return "#";
+
+		const displayMate = activeColor === "w" ? rawEvaluationObject.mateIn : rawEvaluationObject.mateIn * -1;
+		const sign = displayMate > 0 ? "+" : "-";
+
+		return `${sign}M${Math.abs(displayMate)}`;
+	} else {
+		const rawScore = rawEvaluationObject.evaluation;
+		const displayScore = activeColor === "w" ? rawScore : rawScore * -1;
+
+		return `${displayScore.toFixed(1)}`;
+	}
+};
 
 /* --------------------------- NAVIGATION CONTROLS -------------------------- */
 const NavigationControls = ({
@@ -170,9 +188,7 @@ const AnalysisDetails = ({ boardInfo }: { boardInfo: BoardNav }) => {
 	const currentEvalData = boardInfo.gamePositions[idx].evaluation;
 	const currentRuleResults = boardInfo.gamePositions[idx].ruleResults;
 
-	const rawScore = currentEvalData[0]?.evaluation ?? 0;
-	let displayScore = activeColor === "w" ? rawScore : rawScore * -1;
-	if (displayScore === Infinity || displayScore === -Infinity) displayScore = 0; //for now
+	const displayScore = formatEval(currentEvalData[0], activeColor);
 
 	const currentMode = getMode(boardInfo.currentMode);
 

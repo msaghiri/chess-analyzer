@@ -12,6 +12,7 @@ export interface EvaluationObject {
 	depth: number; //i think we should use seldepth for this, maybe time in the future?
 	line: string[];
 	evaluation: number;
+	mateIn: number | null;
 }
 
 //game
