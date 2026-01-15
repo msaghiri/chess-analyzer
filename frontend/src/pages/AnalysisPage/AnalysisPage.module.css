@@ -11,6 +11,7 @@
 	height: 100vh;
 	display: grid;
 	grid-template-columns: 4fr 2fr;
+	grid-template-rows: 1fr;
 	overflow: hidden;
 	gap: 20px;
 }
@@ -36,6 +37,12 @@
 .boardWrapper {
 	padding: 15px;
 	max-width: 750px;
+}
+
+.rightSection {
+	height: 100%; /* Fills the grid row */
+	min-height: 0; /* CRITICAL: This is the only thing that stops expansion */
+	display: flex; /* Ensures the sidebar child stretches correctly */
 }
 
 @media (max-width: 1150px) {

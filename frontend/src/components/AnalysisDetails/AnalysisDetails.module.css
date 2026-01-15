@@ -142,40 +142,42 @@
 .ruleContainerBody {
 	display: flex;
 	flex-direction: column;
-	width: 100%;
+	width: 90%;
 	overflow: hidden;
 	flex-wrap: wrap;
 }
 .actualRule {
-	width: 275px;
+	box-sizing: border-box;
+	max-width: 270px;
 	height: auto;
 	overflow-wrap: break-word;
 	display: block;
 }
 
-[data-category="critical"] {
-	background-color: rgba(85, 21, 21, 0.253);
+[data-category="significant weakness"] {
+	background: linear-gradient(135deg, rgba(229, 115, 115, 0.75), rgba(183, 28, 28, 0.219));
 }
-[data-category="significant"] {
-	background-color: rgba(168, 116, 18, 0.212);
+
+[data-category="minor weakness"] {
+	background: linear-gradient(135deg, rgba(141, 104, 49, 0.5), rgba(245, 123, 0, 0.158));
 }
-[data-category="minor"] {
-	background-color: rgba(131, 37, 8, 0.479);
-}
-[data-category="positive"] {
-	background-color: rgba(24, 95, 24, 0.281);
-}
+
 [data-category="neutral"] {
-	background-color: rgba(145, 86, 19, 0.555);
+	background: linear-gradient(135deg, rgba(144, 164, 174, 0.5), rgba(69, 90, 100, 0.35));
+}
+
+[data-category="minor advantage"] {
+	background: linear-gradient(135deg, rgba(129, 199, 132, 0.65), rgba(56, 142, 60, 0.45));
+}
+
+[data-category="significant advantage"] {
+	background: linear-gradient(135deg, rgba(61, 106, 128, 0.75), rgba(2, 136, 209, 0.55));
 }
 
 .ruleContainerBody {
 	padding-left: 10px;
 	color: rgb(228, 228, 228);
 	padding: 10px;
-}
-.ruleContainerBody li {
-	max-width: 275px;
 }
 
 .ruleName {
@@ -227,5 +229,8 @@
 		justify-content: center;
 
 		font-size: var(--main-font-size);
+	}
+	.sidebar {
+		width: 100%;
 	}
 }

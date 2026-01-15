@@ -3,7 +3,7 @@ import { parseHeuristics, runAnalysis } from "../feature-extraction/featureExtra
 import type { EnrichedContext } from "./types/context.types";
 import { getGamePhase } from "./enrichedContextBuilder";
 import type { GamePhase } from "./constants";
-import { pawnRules } from "./rules/pawnRules";
+import { mergePawnRules, pawnRules } from "./rules/pawnRules";
 import type { RuleResult, RuleResults } from "./types/rules.types";
 import { imbalanceRules } from "./rules/imbalanceRules";
 import { toPlay } from "./rulesEngineUtils";
@@ -74,12 +74,13 @@ export class RulesEngine {
 
 		const pawnRuleResults: RuleResult[] = [];
 		pawnRules.forEach((rule) => pawnRuleResults.push(...rule.evaluate(currentEnrichedContext)));
+		const mergedPawnRuleResults = mergePawnRules(pawnRuleResults);
 
 		const imbalanceRuleResults: RuleResult[] = [];
 		imbalanceRules.forEach((rule) => imbalanceRuleResults.push(...rule.evaluate(currentEnrichedContext)));
 
 		return {
-			pawn: pawnRuleResults,
+			pawn: mergedPawnRuleResults,
 			imbalance: imbalanceRuleResults,
 		};
 	}
