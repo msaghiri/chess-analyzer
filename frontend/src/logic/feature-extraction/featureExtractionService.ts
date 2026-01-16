@@ -28,12 +28,14 @@ export const parseHeuristics = (overallHeuristics: OverallHeuristics): ParsedOve
 	const pawnHeuristics = overallHeuristics.pawnHeuristics;
 	const imbalanceHeuristics = overallHeuristics.imbalanceHeuristics;
 
+	const parsedPawns: ParsedPieceMap = parsePieceMap(pawnHeuristics.pawns);
 	const parsedPassedPawns: ParsedPieceMap = parsePieceMap(pawnHeuristics.passedPawns);
 	const parsedIsolatedPawns: ParsedPieceMap = parsePieceMap(pawnHeuristics.isolatedPawns);
 	const parsedBackwardsPawns: ParsedPieceMap = parsePieceMap(pawnHeuristics.backwardsPawns);
 	const parsedPawnChains: ParsedPawnChains = parsePawnChains(pawnHeuristics.pawnChains);
 
 	const parsedPawnHeuristics: ParsedPawnHeuristics = {
+		pawns: parsedPawns,
 		passedPawns: parsedPassedPawns,
 		isolatedPawns: parsedIsolatedPawns,
 		backwardsPawns: parsedBackwardsPawns,

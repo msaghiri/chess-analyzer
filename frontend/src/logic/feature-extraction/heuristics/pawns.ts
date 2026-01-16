@@ -278,7 +278,7 @@ export const analyzePawns = (chessboard: string[][], pressureMap: PressureMap): 
 	const isolatedPawns = getIsolatedPawns(pawnsByFile);
 	const backwardsPawns = getBackwardsPawns(pawnsByFile, pressureMap);
 
-	return { passedPawns, pawnChains, isolatedPawns, backwardsPawns };
+	return { pawns, passedPawns, pawnChains, isolatedPawns, backwardsPawns };
 };
 
 //for testing purposes only, temporary

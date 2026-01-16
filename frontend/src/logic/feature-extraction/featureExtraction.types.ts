@@ -135,6 +135,7 @@ export type BishopPair = {
 
 /* ----------------------- OVERALL HEURISTICS OBJECTS ----------------------- */
 export interface PawnHeuristics {
+	pawns: PieceMap;
 	passedPawns: PieceMap;
 	isolatedPawns: PieceMap;
 	backwardsPawns: PieceMap;
@@ -142,6 +143,7 @@ export interface PawnHeuristics {
 }
 
 export interface ParsedPawnHeuristics {
+	pawns: ParsedPieceMap;
 	passedPawns: ParsedPieceMap;
 	isolatedPawns: ParsedPieceMap;
 	backwardsPawns: ParsedPieceMap;

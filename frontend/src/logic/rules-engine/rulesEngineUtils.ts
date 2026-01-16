@@ -80,6 +80,33 @@ export const toPlay = (fen: string): "white" | "black" => {
 	return parts[1] === "w" ? "white" : "black";
 };
 
+export const getSquareColor = (square: square): "light" | "dark" => {
+	const fileNumerical = square.charCodeAt(0) - 96;
+	const rankNumerical = parseInt(square.charAt(1));
+
+	if ((fileNumerical + rankNumerical) % 2 === 0) return "dark";
+
+	return "light";
+};
+
+export interface SquareColorMap {
+	light: square[];
+	dark: square[];
+}
+
+export const getSquareColorMap = (squares: square[]): SquareColorMap => {
+	const squareColorMap: SquareColorMap = {
+		light: [] as square[],
+		dark: [] as square[],
+	};
+
+	squares.forEach((square) => {
+		squareColorMap[getSquareColor(square)].push(square);
+	});
+
+	return squareColorMap;
+};
+
 export const capitalize = (s: string): string => {
 	return s.charAt(0).toUpperCase() + s.slice(1);
 };
