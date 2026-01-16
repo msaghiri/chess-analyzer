@@ -216,7 +216,7 @@
 
 @media (max-width: 750px) {
 	.sidebar {
-		min-width: 200px;
+		width: 100%;
 	}
 }
 
@@ -238,5 +238,20 @@
 	}
 	.sidebar {
 		width: 100%;
+	}
+}
+
+@media (max-width: 700px) {
+	.sidebar {
+		padding: 10px;
+	}
+	.modeNavigationContainer {
+		height: 40px;
+	}
+	.stockfishSection {
+		height: 50px;
+	}
+	.buttonsContainer {
+		height: 40px;
 	}
 }
