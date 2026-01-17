@@ -7,4 +7,5 @@ export interface EnrichedContext {
 	parsedHeuristics: ParsedOverallHeuristics;
 	gamePhase: GamePhase;
 	toPlay: "white" | "black";
+	moveNum: number;
 }

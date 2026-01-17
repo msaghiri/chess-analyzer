@@ -37,23 +37,23 @@ function evaluatePassedPawns(enrichedContext: EnrichedContext): RuleResult[] {
 			switch (enrichedContext.gamePhase) {
 				case phases.ENDGAME:
 					messages.push(
-						`The passed pawn on ${pawnSquare} is an important asset in the endgame for ${capitalize(color)}`
+						`The passed pawn on ${pawnSquare} is an important asset in the endgame for ${capitalize(color)}`,
 					);
 					break;
 				case phases.MIDDLEGAME:
 					importance -= 0.2;
 					messages.push(
 						`${capitalize(
-							color
-						)} should try to defend the passed pawn on ${pawnSquare} if possible to prepare for the endgame`
+							color,
+						)} should try to defend the passed pawn on ${pawnSquare} if possible to prepare for the endgame`,
 					);
 					break;
 				case phases.OPENING:
 					importance -= 0.5;
 					messages.push(
 						`${capitalize(
-							color
-						)} has a passed pawn on ${pawnSquare}, but it is early in the game and it is unlikely to promote`
+							color,
+						)} has a passed pawn on ${pawnSquare}, but it is early in the game and it is unlikely to promote`,
 					);
 			}
 
@@ -61,7 +61,7 @@ function evaluatePassedPawns(enrichedContext: EnrichedContext): RuleResult[] {
 			const isAdvanced = color === "white" ? pawnRank >= 5 : pawnRank <= 4;
 			if (isAdvanced) {
 				messages.push(
-					`${capitalize(color)}'s passed pawn on ${pawnSquare} is far up the board, making it a valuable asset`
+					`${capitalize(color)}'s passed pawn on ${pawnSquare} is far up the board, making it a valuable asset`,
 				);
 			} else {
 				importance -= 0.2;
@@ -162,13 +162,13 @@ function evaluateIsolatedPawns(enrichedContext: EnrichedContext): RuleResult[] {
 			if (pawnCentrality !== centralTypes.NOT_CENTRAL) {
 				severity = "significant weakness";
 				messages.push(
-					`${capitalize(color)}'s isolated pawn on ${pawn} is central, making it a clear target for ${opposingColor}.`
+					`${capitalize(color)}'s isolated pawn on ${pawn} is central, making it a clear target for ${opposingColor}.`,
 				);
 			}
 			if (phase === phases.ENDGAME) {
 				severity = "significant weakness";
 				messages.push(
-					`During the endgame, ${capitalize(color)}'s isolated pawn on ${pawn} becomes a clearer weakness.`
+					`During the endgame, ${capitalize(color)}'s isolated pawn on ${pawn} becomes a clearer weakness.`,
 				);
 			}
 			if (isPawnVulnerable === vulnerabilityMetrics.HANGING) {
@@ -346,7 +346,7 @@ function evaluatePawnStructures(enrichedContext: EnrichedContext): RuleResult[] 
 			if (gamePhase !== phases.OPENING) {
 				colorPawnStructureVerdict.severity = "significant weakness";
 				colorPawnStructureVerdict.messages.push(
-					`${capitalize(color)}'s pawn structure gives the opponent many good targets.`
+					`${capitalize(color)}'s pawn structure gives the opponent many good targets.`,
 				);
 			}
 		}
@@ -355,17 +355,17 @@ function evaluatePawnStructures(enrichedContext: EnrichedContext): RuleResult[] 
 			if (gamePhase !== phases.OPENING) {
 				colorPawnStructureVerdict.severity = "significant advantage";
 				colorPawnStructureVerdict.messages.push(
-					`${capitalize(color)}'s big pawn chain is a major strength in this phase of the game.`
+					`${capitalize(color)}'s big pawn chain is a major strength in this phase of the game.`,
 				);
 			} else {
 				colorPawnStructureVerdict.severity = "minor advantage";
 				colorPawnStructureVerdict.messages.push(
-					`${capitalize(color)} has maintained a solid pawn structure so far, but it is still early in the game.`
+					`${capitalize(color)} has maintained a solid pawn structure so far, but it is still early in the game.`,
 				);
 			}
 		}
 
-		pawnStructureRuleResults.push(colorPawnStructureVerdict);
+		if (colorPawnStructureVerdict.messages.length > 0) pawnStructureRuleResults.push(colorPawnStructureVerdict);
 	};
 
 	processColor("white");

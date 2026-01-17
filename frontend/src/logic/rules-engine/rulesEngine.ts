@@ -12,6 +12,7 @@ export class RulesEngine {
 	//@ts-expect-error i might need this later
 	private previousFen: string | undefined;
 	private fen: string | undefined;
+	private moveNum: number | undefined;
 	//@ts-expect-error i might need this later
 	private previousHeuristics: OverallHeuristics | undefined;
 	//@ts-expect-error i might need this later
@@ -28,6 +29,7 @@ export class RulesEngine {
 			this.heuristics = runAnalysis(fen);
 			this.parsedHeuristics = parseHeuristics(this.heuristics);
 			this.fen = fen;
+			this.moveNum = 0;
 			this.isInitialized = true;
 		} catch {
 			throw Error("Invalid FEN");
@@ -35,7 +37,7 @@ export class RulesEngine {
 	}
 
 	public setPosition(fen: string) {
-		if (this.fen === undefined) throw Error("Initialize before calling setPosition");
+		if (this.fen === undefined || this.moveNum === undefined) throw Error("Initialize before calling setPosition");
 
 		try {
 			this.previousHeuristics = this.heuristics;
@@ -44,6 +46,7 @@ export class RulesEngine {
 			this.heuristics = runAnalysis(fen);
 			this.parsedHeuristics = parseHeuristics(this.heuristics);
 			this.fen = fen;
+			this.moveNum += 1;
 		} catch {
 			throw Error("Invalid FEN");
 		}
@@ -54,10 +57,15 @@ export class RulesEngine {
 	}
 
 	private buildEnrichedContext(): EnrichedContext {
-		if (this.fen === undefined || this.heuristics === undefined || this.parsedHeuristics === undefined)
+		if (
+			this.fen === undefined ||
+			this.heuristics === undefined ||
+			this.parsedHeuristics === undefined ||
+			this.moveNum === undefined
+		)
 			throw new Error("Rules engine improperly initialized.");
 
-		const phase: GamePhase = getGamePhase(this.heuristics.imbalanceHeuristics.materialCount);
+		const phase: GamePhase = getGamePhase(this.heuristics.imbalanceHeuristics.materialCount, this.moveNum);
 		const turn: "white" | "black" = toPlay(this.fen);
 
 		return {
@@ -66,6 +74,7 @@ export class RulesEngine {
 			parsedHeuristics: this.parsedHeuristics,
 			gamePhase: phase,
 			toPlay: turn,
+			moveNum: this.moveNum,
 		};
 	}
 

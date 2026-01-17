@@ -1,7 +1,7 @@
 import type { ParsedPieceAttackMap, ParsedPieceMap, square } from "../../feature-extraction/featureExtraction.types";
 import { getSquare, RANKS, FILES } from "../../feature-extraction/featureExtractionUtils";
 import { phases } from "../constants";
-import { capitalize, getSquareColor, getSquareColorMap, type SquareColorMap } from "../rulesEngineUtils";
+import { capitalize, getSquareColor, getSquareColorMap } from "../rulesEngineUtils";
 import type { EnrichedContext } from "../types/context.types";
 import type { Rule, RuleResult, Severity } from "../types/rules.types";
 
@@ -55,8 +55,8 @@ function evaluateBishopPair(enrichedContext: EnrichedContext): RuleResult[] {
 		bishopPairRuleResult.color = "neutral";
 		bishopPairRuleResult.severity = "neutral";
 		bishopPairRuleResult.messages.push("Both sides have the bishop pair.");
-		bishopPairRuleResult.parsedAffectedSquares.push(...allBishopPositions.white);
-		bishopPairRuleResult.parsedAffectedSquares.push(...allBishopPositions.black);
+		//bishopPairRuleResult.parsedAffectedSquares.push(...allBishopPositions.white); <-- maybe only color bishops if one side has the pair
+		//bishopPairRuleResult.parsedAffectedSquares.push(...allBishopPositions.black);
 	} else if (!bishopPairWhite && !bishopPairBlack) {
 		bishopPairRuleResult.color = "neutral";
 		bishopPairRuleResult.severity = "neutral";
@@ -217,7 +217,7 @@ function evaluateBadPieces(enrichedContext: EnrichedContext): RuleResult[] {
 
 	const pawns: ParsedPieceMap = enrichedContext.parsedHeuristics.pawnHeuristics.pawns;
 	const bishopsAndKnights: MinorPieces = findMinorPieces(
-		enrichedContext.parsedHeuristics.imbalanceHeuristics.attackMap
+		enrichedContext.parsedHeuristics.imbalanceHeuristics.attackMap,
 	);
 
 	const pieceAttackMap = enrichedContext.parsedHeuristics.imbalanceHeuristics.attackMap;
@@ -231,13 +231,12 @@ function evaluateBadPieces(enrichedContext: EnrichedContext): RuleResult[] {
 	const whiteSquareColorMap = getSquareColorMap(whitePawns);
 	const blackSquareColorMap = getSquareColorMap(blackPawns);
 
+	/* ------------------------------- FIND MOVES ------------------------------- */
 	const findBishopMoves = (bishop: square, color: "white" | "black"): square[] => {
 		const colorAttackMap = pieceAttackMap[color];
 		let moves: square[] = [];
 		colorAttackMap.forEach((piece) => {
 			if (piece.attackerPosition === bishop) {
-				console.log(`Bishop found at ${piece.attackerPosition}`);
-				console.log(piece.squares);
 				moves = piece.squares;
 				return;
 			}
@@ -246,13 +245,26 @@ function evaluateBadPieces(enrichedContext: EnrichedContext): RuleResult[] {
 		return moves;
 	};
 
-	//todo-- this can be a lot better
+	const findKnightMoves = (knight: square, color: "white" | "black"): square[] => {
+		const colorAttackMap = pieceAttackMap[color];
+		let moves: square[] = [];
+		colorAttackMap.forEach((piece) => {
+			if (piece.attackerPosition === knight) {
+				moves = piece.squares;
+				return;
+			}
+		});
+
+		return moves;
+	};
+
+	/* ----------------------------- EVALUATE PIECES ---------------------------- */
 	const evaluateBadBishop = (bishop: square, color: "white" | "black") => {
 		let severity: Severity = "neutral";
 		const messages: string[] = [];
 
 		const friendlyPawnColorMap = color === "white" ? whiteSquareColorMap : blackSquareColorMap;
-		const opposingPawnColorMap = color === "white" ? blackSquareColorMap : whiteSquareColorMap;
+		//const opposingPawnColorMap = color === "white" ? blackSquareColorMap : whiteSquareColorMap; -- might add something here
 		const bishopSquareColor = getSquareColor(bishop);
 		const oppositeSquareColor = bishopSquareColor === "light" ? "dark" : "light";
 
@@ -294,23 +306,75 @@ function evaluateBadPieces(enrichedContext: EnrichedContext): RuleResult[] {
 			severity = "minor advantage";
 			messages.push(
 				`${capitalize(color)}'s ${bishopSquareColor}-square bishop is well positioned to support ${capitalize(
-					color
-				)}'s pawn structure.`
+					color,
+				)}'s pawn structure.`,
 			);
 		}
 
 		console.log(bishop);
 
-		badPiecesRuleResults.push({
-			ruleId: BadPiecesRule.id,
-			ruleName: severity === "minor weakness" ? "Bad Bishop" : "Good Bishop",
-			severity,
-			color,
-			messages,
-			parsedAffectedSquares: [],
-		});
+		if (messages.length > 0) {
+			badPiecesRuleResults.push({
+				ruleId: BadPiecesRule.id,
+				ruleName: severity === "minor weakness" ? "Bad Bishop" : "Good Bishop",
+				severity,
+				color,
+				messages,
+				parsedAffectedSquares: [],
+			});
+		}
 	};
-	const evaluateBadKnight = (knight: square, color: "white" | "black") => {};
+	const evaluateBadKnight = (knight: square, color: "white" | "black") => {
+		let severity: Severity = "minor weakness";
+		const messages: string[] = [];
+		const knightMoves = findKnightMoves(knight, color);
+
+		let badKnight = true;
+
+		//knight cannot move
+		if (knightMoves.length === 0 && enrichedContext.gamePhase !== phases.OPENING) {
+			severity = "significant weakness";
+			badKnight = true;
+
+			messages.push(`${capitalize(color)}'s knight on ${knight} cannot move!`);
+			badPiecesRuleResults.push({
+				ruleId: BadPiecesRule.id,
+				ruleName: "Bad Knight",
+				severity: severity,
+				color: color,
+				parsedAffectedSquares: [],
+				messages: messages,
+			});
+			return;
+		}
+		//knight has limited mobility
+		if (knightMoves.length < 3 && enrichedContext.gamePhase !== phases.OPENING) {
+			severity = "minor weakness";
+			badKnight = true;
+
+			messages.push(`${capitalize(color)}'s knight on ${knight} has limited mobility.`);
+			badPiecesRuleResults.push({
+				ruleId: BadPiecesRule.id,
+				ruleName: "Bad Knight",
+				severity: severity,
+				color: color,
+				parsedAffectedSquares: [],
+				messages: messages,
+			});
+			return;
+		}
+
+		if (messages.length > 0) {
+			badPiecesRuleResults.push({
+				ruleId: BadPiecesRule.id,
+				ruleName: badKnight ? "Bad Knight" : "Good Knight",
+				severity,
+				color,
+				messages,
+				parsedAffectedSquares: [],
+			});
+		}
+	};
 
 	const whiteBishops = whiteMinorPieces.bishops;
 	const blackBishops = blackMinorPieces.bishops;
