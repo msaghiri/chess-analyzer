@@ -12,8 +12,9 @@ A chess analysis tool that aims to bridge the gap between engine evaluation and 
 
 ## Description
 
-This chess analysis tool combines the raw computational power of Stockfish 17.1 with a custom rules-based evaluation engine to provide educational insights into chess positions. The user will be prompted to input a PGN of a game, which is then analyzed one position at a time. The analysis consists of:
+This web app simplifies chess analysis by presenting positional features that highlight key strengths and weaknesses of both sides throughout a game.
 
+These features are presented in a human-readable way and derived from an analysis that consists of:
 - Obtaining an evaluation from Stockfish 17.1 ([stockfish.js](https://github.com/nmrugg/stockfish.js) is used, running in a web worker)
 - Extracting heuristics/features such as but not limited to:
   - Passed pawns
@@ -25,9 +26,7 @@ This chess analysis tool combines the raw computational power of Stockfish 17.1 
   - The expert system is modular and contains "rules" which are defined by a category (imbalances, pawns) and evaluation functions, which apply deterministic logic and return a series of results that contain information such as:
     - Severity (significant weakness, minor weakness, neutral, minor advantage, or significant advantage)
     - Messages (certain predetermined textual explanations of common patterns, such as a bishop that is valuablue due to a majority of its friendly pawns being on the opposite square color)
-
-The user is then redirected to a page with a chessboard where they can navigate the game and view the findings of the analysis for each position.
-
+    
 ## Tech Stack
 
 ### Frontend
