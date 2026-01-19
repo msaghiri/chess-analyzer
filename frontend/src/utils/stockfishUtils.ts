@@ -13,8 +13,6 @@ class StockfishService {
 
 		const workerPath = `${import.meta.env.BASE_URL}stockfish-17.1-lite-single-03e3232.js`;
 
-		console.log(`Initializing Stockfish from ${workerPath}`);
-
 		this.engine = new Worker(workerPath);
 
 		this.engine.onmessage = (event: MessageEvent) => {

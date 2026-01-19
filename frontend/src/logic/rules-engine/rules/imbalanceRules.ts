@@ -373,8 +373,6 @@ function evaluateBadPieces(enrichedContext: EnrichedContext): RuleResult[] {
 			);
 		}
 
-		console.log(bishop);
-
 		if (messages.length > 0) {
 			badPiecesRuleResults.push({
 				ruleId: BadPiecesRule.id,

@@ -201,8 +201,6 @@ const AnalysisDetails = ({ boardInfo }: { boardInfo: BoardNav }) => {
 
 	const currentMode = getMode(boardInfo.currentMode);
 
-	console.log(boardInfo.currentPosition.fen);
-
 	return (
 		<div className={styles.sidebar}>
 			<StockfishSection score={displayScore} evaluations={currentEvalData} />

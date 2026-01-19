@@ -13,7 +13,6 @@ export const START_POSITION: GamePosition = {
 export const createGameObject = (pgn: string): ChessGame => {
 	const game = new Chess();
 	game.loadPgn(pgn);
-	console.log("Loaded");
 	const tempArr: GamePosition[] = [START_POSITION];
 	const history = game.history({ verbose: true });
 	history.forEach((fen, index) => {

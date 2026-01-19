@@ -8,7 +8,6 @@ const loadGamePositions = (): GamePosition[] => {
 
 	if (gamePositions) {
 		const gamePositionsArray: GamePosition[] = JSON.parse(gamePositions);
-		console.log("LOADING GAME");
 		return gamePositionsArray;
 	} else {
 		return [
