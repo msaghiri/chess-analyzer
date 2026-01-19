@@ -31,6 +31,7 @@ const StockfishLines = ({ evaluations }: { evaluations: EvaluationObject[] }) =>
 );
 
 const StockfishLinesMobile = ({ evaluations }: { evaluations: EvaluationObject[] }) => {
+	if (evaluations.length === 0) return <></>;
 	const item = evaluations[0].line;
 	return (
 		<div className={styles.mobileStockfishLines}>
@@ -47,7 +48,12 @@ const StockfishSection = ({ score, evaluations }: { score: string; evaluations: 
 );
 
 const formatEval = (rawEvaluationObject: EvaluationObject, activeColor: string): string => {
-	if (!rawEvaluationObject || !activeColor) return "0.0";
+	if (!rawEvaluationObject || !activeColor) {
+		if (activeColor && activeColor === "w") {
+			return "-#";
+		}
+		return "#";
+	}
 
 	if (rawEvaluationObject.mateIn !== null) {
 		if (rawEvaluationObject.mateIn === 0) return "#";
