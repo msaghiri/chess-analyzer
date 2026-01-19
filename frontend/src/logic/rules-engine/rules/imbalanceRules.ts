@@ -1,4 +1,9 @@
-import type { ParsedPieceAttackMap, ParsedPieceMap, square } from "../../feature-extraction/featureExtraction.types";
+import type {
+	ParsedPieceAttackMap,
+	ParsedPieceMap,
+	ParsedPressureMap,
+	square,
+} from "../../feature-extraction/featureExtraction.types";
 import { getSquare, RANKS, FILES } from "../../feature-extraction/featureExtractionUtils";
 import { phases } from "../constants";
 import { capitalize, getSquareColor, getSquareColorMap } from "../rulesEngineUtils";
@@ -212,6 +217,24 @@ function findMinorPieces(parsedPieceAttackMap: ParsedPieceAttackMap): MinorPiece
 	return minorPieces;
 }
 
+function getMovesControlledByOpposingPawns(
+	color: "white" | "black",
+	moves: square[],
+	pressureMap: ParsedPressureMap,
+): square[] {
+	const movesControlledByOpposingPawns: square[] = [];
+
+	moves.forEach((move) => {
+		const squarePressure = pressureMap[move];
+		const isSquareAttackedByOpposingPawn =
+			color === "white" ? squarePressure.blackMin === 1 : squarePressure.whiteMin === 1;
+
+		if (isSquareAttackedByOpposingPawn) movesControlledByOpposingPawns.push(move);
+	});
+
+	return movesControlledByOpposingPawns;
+}
+
 function evaluateBadPieces(enrichedContext: EnrichedContext): RuleResult[] {
 	const badPiecesRuleResults: RuleResult[] = [];
 
@@ -221,6 +244,7 @@ function evaluateBadPieces(enrichedContext: EnrichedContext): RuleResult[] {
 	);
 
 	const pieceAttackMap = enrichedContext.parsedHeuristics.imbalanceHeuristics.attackMap;
+	const pressureMap = enrichedContext.parsedHeuristics.imbalanceHeuristics.pressureMap;
 
 	const whiteMinorPieces = bishopsAndKnights.white;
 	const blackMinorPieces = bishopsAndKnights.black;
@@ -264,11 +288,13 @@ function evaluateBadPieces(enrichedContext: EnrichedContext): RuleResult[] {
 		const messages: string[] = [];
 
 		const friendlyPawnColorMap = color === "white" ? whiteSquareColorMap : blackSquareColorMap;
-		//const opposingPawnColorMap = color === "white" ? blackSquareColorMap : whiteSquareColorMap; -- might add something here
 		const bishopSquareColor = getSquareColor(bishop);
 		const oppositeSquareColor = bishopSquareColor === "light" ? "dark" : "light";
 
 		const bishopMoves = findBishopMoves(bishop, color);
+		const movesControlledByPawns = getMovesControlledByOpposingPawns(color, bishopMoves, pressureMap);
+		const bishopMovesAsSet = new Set(bishopMoves);
+		const controlledMovesAsSet = new Set(movesControlledByPawns);
 
 		//bishop cannot move
 		if (bishopMoves.length === 0 && enrichedContext.gamePhase !== phases.OPENING) {
@@ -284,6 +310,42 @@ function evaluateBadPieces(enrichedContext: EnrichedContext): RuleResult[] {
 			});
 			return;
 		}
+
+		//trapped bishop
+		let trapped = true;
+
+		if (movesControlledByPawns.length === 0) {
+			trapped = false;
+		} else {
+			bishopMovesAsSet.forEach((move) => {
+				if (!controlledMovesAsSet.has(move)) {
+					trapped = false;
+					return;
+				}
+			});
+		}
+
+		if (trapped) {
+			severity = "significant weakness";
+			messages.push(`${capitalize(color)}'s ${bishopSquareColor}-square bishop is trapped by the opposing pawns!`);
+			badPiecesRuleResults.push({
+				ruleId: BadPiecesRule.id,
+				ruleName: "Trapped Bishop",
+				severity: severity,
+				color: color,
+				parsedAffectedSquares: [...bishopMoves],
+				messages: messages,
+			});
+			return;
+		}
+
+		if (movesControlledByPawns.length > 0 && movesControlledByPawns.length > bishopMoves.length * 0.75) {
+			severity = "minor weakness";
+			messages.push(
+				`${capitalize(color)}'s ${bishopSquareColor}-square bishop is being heavily limited by the opponents pawns.`,
+			);
+		}
+
 		//bishop has low mobility
 		if (bishopMoves.length <= 3 && enrichedContext.gamePhase !== phases.OPENING) {
 			severity = "minor weakness";
@@ -327,9 +389,46 @@ function evaluateBadPieces(enrichedContext: EnrichedContext): RuleResult[] {
 	const evaluateBadKnight = (knight: square, color: "white" | "black") => {
 		let severity: Severity = "minor weakness";
 		const messages: string[] = [];
+
 		const knightMoves = findKnightMoves(knight, color);
+		const knightControlledMoves = getMovesControlledByOpposingPawns(color, knightMoves, pressureMap);
+
+		const sKnightMoves = new Set(knightMoves);
+		const sKnightControlledMoves = new Set(knightControlledMoves);
 
 		let badKnight = true;
+
+		let trapped = true;
+
+		if (knightControlledMoves.length === 0) {
+			trapped = false;
+		} else {
+			sKnightMoves.forEach((move) => {
+				if (!sKnightControlledMoves.has(move)) {
+					trapped = false;
+					return;
+				}
+			});
+		}
+
+		if (trapped) {
+			severity = "significant weakness";
+			messages.push(`${capitalize(color)}'s knight on ${knight} is trapped by the opposing pawns!`);
+			badPiecesRuleResults.push({
+				ruleId: BadPiecesRule.id,
+				ruleName: "Trapped Knight",
+				severity: severity,
+				color: color,
+				parsedAffectedSquares: [...knightMoves],
+				messages: messages,
+			});
+			return;
+		}
+
+		if (knightControlledMoves.length > 0 && knightControlledMoves.length > knightMoves.length * 0.75) {
+			severity = "minor weakness";
+			messages.push(`${capitalize(color)}'s knight on ${knight} is being heavily limited by the opponents pawns.`);
+		}
 
 		//knight cannot move
 		if (knightMoves.length === 0 && enrichedContext.gamePhase !== phases.OPENING) {
