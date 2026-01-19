@@ -13,7 +13,7 @@ import {
 export const isPieceVulnerable = (
 	color: "white" | "black",
 	squarePressure: SquarePressure,
-	pieceValue: number
+	pieceValue: number,
 ): vulnerabilityMetric => {
 	const opposingColor = color === "white" ? "black" : "white";
 	const attackers = squarePressure[opposingColor].pieces;
@@ -33,15 +33,15 @@ export const isPieceVulnerable = (
 export const calculateExchangeBalance = (
 	color: "white" | "black",
 	squarePressure: SquarePressure,
-	pieceValue: number
+	pieceValue: number,
 ): number => {
 	const opposingColor = color === "white" ? "black" : "white";
 
 	const attackers = [...squarePressure[opposingColor].pieces].sort(
-		(a, b) => getMaterialValue(a.type) - getMaterialValue(b.type)
+		(a, b) => getMaterialValue(a.type) - getMaterialValue(b.type),
 	);
 	const defenders = [...squarePressure[color].pieces].sort(
-		(a, b) => getMaterialValue(a.type) - getMaterialValue(b.type)
+		(a, b) => getMaterialValue(a.type) - getMaterialValue(b.type),
 	);
 
 	let balance = 0;
@@ -68,9 +68,9 @@ export const calculateExchangeBalance = (
 export const getPieceCentrality = (piecePosition: square): CentralType => {
 	const file = piecePosition.charAt(0);
 
-	if (piecePosition in SMALL_CENTER_SQUARES) return centralTypes.SMALL_CENTER;
-	if (piecePosition in BIG_CENTER_SQUARES) return centralTypes.BIG_CENTER;
-	if (file in CENTRAL_FILES) return centralTypes.CENTRAL_FILE;
+	if (SMALL_CENTER_SQUARES.includes(piecePosition)) return centralTypes.SMALL_CENTER;
+	if (BIG_CENTER_SQUARES.includes(piecePosition)) return centralTypes.BIG_CENTER;
+	if (CENTRAL_FILES.includes(file)) return centralTypes.CENTRAL_FILE;
 
 	return centralTypes.NOT_CENTRAL;
 };
