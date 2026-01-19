@@ -1,75 +1,67 @@
-# React + TypeScript + Vite
+# Chess Analyzer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A chess analysis tool that aims to bridge the gap between engine evaluation and human understanding.
 
-Currently, two official plugins are available:
+## Description
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This chess analysis tool combines the raw computational power of Stockfish 17.1 with a custom rules-based evaluation engine to provide educational insights into chess positions. The user will be prompted to input a PGN of a game, which will be then analyzed one position at a time. The analysis consists of:
 
-## React Compiler
+- Obtaining an evaluation from Stockfish 17.1 ([stockfish.js](https://github.com/nmrugg/stockfish.js) is used, running in a web worker)
+- Extracting heuristics/features such as but not limited to:
+  - Passed pawns
+  - Backwards pawns
+  - Pressure maps:
+    - A pressure map is a map data structure that holds information about which squares are attacked by which pieces
+  - Material count
+- The heuristics are then passed to a custom expert system which then runs an analysis
+  - The expert system is modular and contains "rules" which are defined by a category (imbalances, pawns) and evaluation functions, which apply deterministic logic and return a series of results that contain information such as:
+    - Severity (significant weakness, minor weakness, neutral, minor advantage, or significant advantage)
+    - Messages (certain predetermined textual explanations of common patterns, such as a bishop that is valuablue due to a majority of its friendly pawns being on the opposite square color)
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+The user is then redirected to a page with a chessboard where they can navigate the game and view the findings of the analysis for each position.
 
-Note: This will impact Vite dev & build performances.
+## Tech Stack
 
-## Expanding the ESLint configuration
+### Frontend
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React 18** with TypeScript
+- **Vite** for build tooling
+- **react-chessboard** for interactive board rendering
+- **chess.js** for chess logic and validation
+- **Lucide React** for icons
+- **CSS Modules** for styling
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Chess Engine
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Stockfish 17.1** (WebAssembly via stockfish.js) - Depth 10 analysis with MultiPV=3 for top engine lines
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+
+### Installation
+
+1.  Clone the repository:
+
+```bash
+git clone <repository-url>
+cd <project-directory>
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2.  Install dependencies:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd frontend
+npm install
 ```
+
+3.  Start the development server:
+
+```bash
+npm run dev
+```
+
+4.  Open the URL shown in your terminal
