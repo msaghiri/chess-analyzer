@@ -37,6 +37,20 @@
 	transition-duration: 100ms;
 }
 
+.pgnLoadSampleButton {
+	cursor: pointer;
+	width: 65%;
+	height: 30px;
+	background-color: var(--main-button-color);
+	border-radius: 20px;
+	transition: background-color;
+	transition-duration: 100ms;
+}
+
+.pgnLoadSampleButton:hover {
+	background-color: var(--main-button-color-hover);
+}
+
 .pgnLoadButton:hover {
 	background-color: var(--main-button-color-hover);
 }
